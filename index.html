@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Жылу балансы · №1 зертханалық жұмыс</title>
+<style>
+:root{
+  --bg:#eef2f7; --bg2:#f1f4f8; --card:#ffffff; --ink:#1b2430; --ink2:#3a4656; --muted:#6b7686; --line:#d8dee8;
+  --hot:#d83a2b; --hot-soft:#fcebe8; --cold:#2361d6; --cold-soft:#e7eefc;
+  --mix:#7440b8; --mix-soft:#f1eafa; --exp:#1f8a44; --exp-soft:#e6f4ea; --warn:#c97a00; --warn-soft:#fdf3e0;
+  --accent:#1f4f9c; --stage:#fbfcfe; --glass:rgba(200,215,235,.35); --glassline:#5a6474;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.55}
+main{max-width:1000px;margin:0 auto;padding:0 16px 40px}
+.top{background:var(--accent);color:#fff;margin:0 -16px 18px;padding:26px 28px 22px;border-radius:0 0 12px 12px}
+.top h1{font-size:1.65rem;line-height:1.25;margin:0 0 8px}
+.top p{margin:4px 0;opacity:.92}
+.top .meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.top .meta span{background:rgba(255,255,255,.16);padding:3px 10px;border-radius:5px;font-size:.85rem}
+h2{font-size:1.3rem;color:var(--accent);margin:0 0 12px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+h3{font-size:1.05rem;margin:16px 0 6px;color:var(--ink2)}
+p{margin:6px 0}
+a{color:var(--accent)}
+.mono{font-family:Consolas,"Courier New",monospace}
+.muted{color:var(--muted)}.small{font-size:.9rem}
+section.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin:0 0 18px;box-shadow:0 1px 3px rgba(20,30,50,.06);scroll-margin-top:12px}
+@media(max-width:600px){section.card{padding:16px 14px}}
+.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 20px;margin:0 0 18px}
+.toc ol{margin:6px 0 0;padding-left:22px;columns:2;column-gap:30px}
+@media(max-width:600px){.toc ol{columns:1}}
+.toc li{margin:2px 0}.toc a{text-decoration:none}.toc a:hover{text-decoration:underline}
+.lead{font-weight:600;font-size:1.05rem;border-left:4px solid var(--accent);padding:4px 0 4px 12px;background:var(--bg2)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{display:inline-block;font-size:.8rem;font-weight:600;padding:2px 8px;border-radius:5px;background:var(--bg2);color:var(--ink2)}
+.chip.hot{background:var(--hot-soft);color:var(--hot)}.chip.cold{background:var(--cold-soft);color:var(--cold)}
+.chip.mix{background:var(--mix-soft);color:var(--mix)}.chip.exp{background:var(--exp-soft);color:var(--exp)}.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.tasks{padding-left:24px;margin:8px 0}.tasks li{margin:5px 0}.tasks .chip{margin-left:6px;font-size:.72rem}
+.hyp{border:1px solid #e4c969;border-left:5px solid #d9a800;background:#fffbea;padding:12px 14px;border-radius:6px}
+.hyp .k{font-weight:700;padding:0 4px;border-radius:3px}
+.hyp .k1{background:var(--cold-soft);color:var(--cold)}.hyp .k2{background:var(--hot-soft);color:var(--hot)}.hyp .k3{background:var(--mix-soft);color:var(--mix)}
+.formulas{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;margin:8px 0}
+.f{background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:8px 12px}
+.f .t{font-size:.8rem;color:var(--muted)}.f .e{font-weight:700;font-family:"Times New Roman",serif;font-size:1.15rem}
+.vars{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:760px){.vars{grid-template-columns:1fr}}
+.var{border:1px solid var(--line);border-radius:8px;padding:10px 12px;border-top:4px solid}
+.var.v1{border-top-color:var(--cold)}.var.v2{border-top-color:var(--mix)}.var.v3{border-top-color:#8a94a4}
+.var h4{margin:0 0 6px;font-size:.98rem}.var ul{margin:0;padding-left:18px}.var li{margin:2px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media(max-width:820px){.two{grid-template-columns:1fr}}
+.inst{padding:0;margin:0;list-style:none}
+.inst li{margin:4px 0;padding:5px 8px;border-radius:6px;background:var(--bg2);transition:background .15s}
+.inst li b{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;background:var(--accent);color:#fff;font-size:.75rem;margin-right:8px}
+.inst li.hl{background:#fff1b8}
+.scheme{border:1px solid var(--line);border-radius:8px;background:var(--stage)}
+.scheme .lbl{cursor:pointer}.scheme .lbl circle{fill:var(--accent)}.scheme .lbl text{fill:#fff;font-weight:bold;font-size:12px}
+.steps{padding-left:24px;margin:6px 0}.steps li{margin:6px 0}.steps li small{display:block;color:var(--muted)}
+.units{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.units div{background:var(--bg2);border-radius:6px;padding:5px 10px;font-size:.92rem}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:6px 6px;text-align:center}
+th{background:#e9eef6;font-size:.85rem}
+th.m,td.m{background:var(--mix-soft)}th.x,td.x{background:var(--exp-soft)}
+td input{width:68px;padding:4px;border:1px solid #b9c2cf;border-radius:4px;text-align:center;font-size:.92rem}
+td.calc{font-family:Consolas,monospace}
+.rowbtn{border:1px solid #c2c9d4;background:#fff;border-radius:4px;cursor:pointer;color:var(--muted)}
+.safety{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:700px){.safety{grid-template-columns:1fr}}
+.safety li{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;background:var(--hot-soft);border-left:4px solid var(--hot);border-radius:6px;font-size:.93rem}
+.safety li svg{flex:none;width:20px;height:20px;margin-top:2px}
+button,.btn{font:500 14px "Segoe UI",Roboto,Arial,sans-serif;padding:6px 12px;border:1px solid #b9c2cf;background:#fff;border-radius:6px;cursor:pointer;color:var(--ink);text-decoration:none;display:inline-block}
+button:hover,.btn:hover{background:#eef2f8}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.ctrl.h input[type=range]{accent-color:var(--hot)}.ctrl.c input[type=range]{accent-color:var(--cold)}.ctrl.r input[type=range]{accent-color:var(--warn)}
+.lab{display:grid;grid-template-columns:300px 1fr;gap:16px;margin-top:12px}
+@media(max-width:860px){.lab{grid-template-columns:1fr}}
+.ctrl{margin:0 0 8px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;border-left:4px solid var(--line)}
+.ctrl.h{border-left-color:var(--hot)}.ctrl.c{border-left-color:var(--cold)}.ctrl.r{border-left-color:var(--warn)}
+.ctrl .top{all:unset;display:flex;justify-content:space-between;align-items:center;font-size:.9rem;font-weight:600;gap:6px}
+.ctrl .top input{width:62px;padding:2px 4px;border:1px solid #b9c2cf;border-radius:4px;text-align:right;font:600 .9rem Consolas,monospace}
+.ctrl .u{margin-left:3px;font-weight:400;color:var(--muted);font-size:.82rem}
+.switch{display:flex;gap:8px;align-items:center;justify-content:space-between;font-size:.9rem;font-weight:600;margin:8px 0;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--warn-soft);cursor:pointer}
+.switch input{width:18px;height:18px;accent-color:var(--warn)}
+.switch .tg{display:none}
+.realbox{display:none}.realbox.on{display:block}
+.presets{display:flex;flex-wrap:wrap;gap:5px}
+.presets button{font-size:.84rem;padding:4px 9px}
+.stagecard{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--stage)}
+.stagebar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 10px;background:#f3f6fa;border-bottom:1px solid var(--line)}
+.stagebar .phase{margin-right:auto;font-weight:600;display:flex;align-items:center;gap:8px;flex:1 1 220px}
+.stagebar .phase .dot{width:10px;height:10px;border-radius:50%;flex:none}
+.seg{display:inline-flex;border:1px solid #b9c2cf;border-radius:6px;overflow:hidden}
+.seg button{border:0;border-radius:0;padding:5px 9px}.seg button.on{background:var(--accent);color:#fff}
+.play{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important;padding:5px 12px}
+.play svg{vertical-align:middle}
+canvas#stage{display:block;width:100%;height:auto}
+.scrub{display:flex;align-items:center;gap:10px;padding:8px 12px;border-top:1px solid var(--line);background:#f3f6fa}
+.scrub .tm{min-width:62px;text-align:right;font-family:Consolas,monospace}
+.readouts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.readouts{grid-template-columns:repeat(2,1fr)}}
+.ro{border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:#fff;border-top:4px solid var(--line)}
+.ro.mix{border-top-color:var(--mix)}.ro.hot{border-top-color:var(--hot)}.ro.cold{border-top-color:var(--cold)}
+.ro .k{font-size:.82rem;color:var(--muted)}.ro .v{font-size:1.35rem;font-weight:700;font-family:Consolas,monospace}.ro .s{font-size:.78rem;color:var(--muted)}
+.ro.mix .v{color:var(--mix)}.ro.hot .v{color:var(--hot)}.ro.cold .v{color:var(--cold)}
+.ro .badge{font-size:.66rem;font-weight:700;color:var(--mix);float:right}
+.panel{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:#fff}
+.lab .panel{margin:0}
+.panel h3{margin:0 0 8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chartwrap svg{width:100%;height:auto;display:block;overflow:visible}
+svg .grid{stroke:#e5e9f0}svg .axis{stroke:#5a6474}svg .tick{fill:#5a6474;font:11px "Segoe UI",Arial}svg .albl{fill:#2a3442;font:600 12px "Segoe UI",Arial}
+svg text{font-family:"Segoe UI",Arial,sans-serif}
+.legend{font-size:.84rem;margin:2px 0 6px;display:flex;flex-wrap:wrap;gap:4px 14px}
+.legend i{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:5px}
+.legend i.d{background:repeating-linear-gradient(90deg,currentColor 0 4px,transparent 4px 7px)!important}
+#tip{position:fixed;pointer-events:none;z-index:100;background:#1b2430;color:#fff;border-radius:6px;padding:5px 9px;font-size:.82rem;opacity:0;white-space:nowrap;transition:opacity .1s}
+.calc{display:grid;gap:6px}
+.cl{padding:6px 10px;background:var(--bg2);border-radius:6px;font-family:"Times New Roman",serif;font-size:1.04rem;overflow-x:auto}
+.cl .n{display:none}.cl .r{font-weight:bold}
+.cl.hot .r{color:var(--hot)}.cl.cold .r{color:var(--cold)}.cl.mix .r{color:var(--mix)}
+.ebar{margin:8px 0}.ebar .lab{display:flex;justify-content:space-between;font-size:.9rem;font-weight:600;margin:0 0 3px}
+.ebar .track{height:24px;background:var(--bg2);border-radius:5px;display:flex;overflow:hidden}
+.ebar .seg2{height:100%;color:#fff;font:600 .75rem Consolas,monospace;padding-left:6px;display:flex;align-items:center;white-space:nowrap;overflow:hidden;transition:width .35s}
+.balance{margin-top:10px;font-size:.92rem}
+.pill{display:inline-block;font-weight:700;white-space:nowrap;padding:1px 8px;border-radius:5px;margin-right:6px}
+.pill.ok{color:var(--exp);background:var(--exp-soft)}.pill.mid{color:var(--warn);background:var(--warn-soft)}.pill.bad{color:var(--hot);background:var(--hot-soft)}
+.selrow{font-size:.9rem;margin-bottom:6px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+select{font:14px "Segoe UI",Arial;padding:4px 6px;border:1px solid #b9c2cf;border-radius:5px;background:#fff}
+.hypcheck{margin-top:8px;padding:8px 10px;background:var(--mix-soft);border-radius:6px;font-size:.92rem}
+.hypcheck .chip{margin-right:6px;background:#fff}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.cmp{grid-template-columns:1fr}}
+.cmpcol{border:2px solid;border-radius:8px;padding:10px 12px}
+.cmpcol.m{border-color:var(--mix);background:#fbf8fe}.cmpcol.x{border-color:var(--exp);background:#f7fcf8}
+.cmpcol h3{margin:0 0 4px}.cmpcol ul{margin:4px 0 0;padding-left:18px;font-size:.92rem}
+.verdict{margin-top:10px;padding:8px 12px;background:var(--bg2);border-radius:6px}
+textarea{width:100%;min-height:74px;font:inherit;border:1px solid #b9c2cf;border-radius:6px;padding:8px}
+.askai{margin-top:8px;border-color:var(--mix);color:var(--mix);background:var(--mix-soft)}
+.askai:hover{background:#e7dcf6}
+.ai{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.aitools{padding:8px 10px;border-bottom:1px solid var(--line);background:#f3f6fa}
+.aiset{display:none;padding:10px 12px;background:#fafbfd;border-bottom:1px solid var(--line);font-size:.9rem}
+.aiset.on{display:block}
+.aiset input,.aiset select{width:100%;margin:2px 0 8px;padding:6px;border:1px solid #b9c2cf;border-radius:5px}
+.aiset .r{display:flex;gap:6px}.aiset .r select{flex:1}
+.msgs{height:360px;overflow-y:auto;padding:10px 12px;background:#fff}
+.msg{margin:8px 0;padding:8px 11px;border-radius:8px;max-width:88%;font-size:.94rem}
+.msg.u{margin-left:auto;background:var(--accent);color:#fff}.msg.a{background:var(--bg2)}
+.msg.a ul{margin:4px 0;padding-left:18px}.msg.err{color:var(--hot);background:var(--hot-soft)}
+.msg code{font-family:Consolas,monospace;background:#fff;padding:0 4px;border-radius:3px}
+.typing span{display:inline-block;width:6px;height:6px;border-radius:50%;background:#888;margin-right:3px;animation:ty 1s infinite}
+.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+@keyframes ty{50%{opacity:.25}}
+.aichips{padding:8px 10px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:5px;background:#fafbfd}
+.aichips button{font-size:.82rem;padding:4px 10px;border-radius:14px}
+.aiin{display:flex;gap:8px;padding:8px 10px;border-top:1px solid var(--line)}
+.aiin textarea{min-height:42px;resize:vertical}
+.aiin button{background:var(--accent);color:#fff;border-color:var(--accent);padding:6px 16px}
+main,.lab>*,.two>*,.cmp>*{min-width:0}
+footer{color:var(--muted);font-size:.85rem;text-align:center;padding:8px 0}
+</style>
+</head>
+<body>
+<div id="tip"></div>
+
+<main>
+<div class="top">
+<div class="meta"><span>Физика</span><span>№1 зертханалық жұмыс</span><span>Орындаған: 1-топ</span></div>
+<h1>Температуралары әртүрлі суды араластырғандағы жылу мөлшерлерін салыстыру</h1>
+<p>Бұл бетте тәжірибенің жоспары және интерактивті модель берілген. Модельде судың массасы мен температурасын өзгертіп, соңғы температура мен жылу мөлшерлерін көруге болады.</p>
+</div>
+<div class="toc"><b>Мазмұны</b><ol id="sidenav"></ol></div>
+
+<section class="card" id="s1" data-title="Зерттеу сұрағы" data-no="1">
+  <h2>1. Зерттеу сұрағы</h2>
+  <p class="lead">Ыстық және суық судың массасы мен бастапқы температуралары олардың араласуынан кейінгі соңғы температураға және жылу алмасу мөлшеріне қалай әсер етеді? Ыстық судың берген жылуы суық судың алған жылуына тең бола ма (жылу балансы орындала ма)?</p>
+  <div class="chips">
+    <span class="chip cold">Өзгертеміз: m₁, t₁, m₂, t₂</span>
+    <span class="chip exp">Өлшейміз: қоспаның температурасы t</span>
+    <span class="chip mix">Есептейміз: Q₁, Q₂</span>
+  </div>
+</section>
+
+<section class="card" id="s2" data-title="Мақсат пен міндеттер" data-no="2">
+  <h2>2. Зерттеудің мақсаты мен міндеттері</h2>
+  <p><b>Мақсаты:</b> жылу берілуде ыстық судың берген және суық судың алған жылу мөлшерлерін анықтап, оларды салыстыру және жылу балансының орындалуын тексеру.</p>
+  <ol class="tasks">
+    <li>Жылу мөлшерінің формуласын Q = cmΔt және жылу балансы теңдеуін Q₁ = Q₂ қарастыру. <span class="chip">Теория</span></li>
+    <li>Ыстық және суық судың бастапқы температуралары мен массаларын анықтау. <span class="chip exp">Өлшеу</span></li>
+    <li>Суларды араластырып, қоспаның соңғы температурасын өлшеу. <span class="chip exp">Өлшеу</span></li>
+    <li>Ыстық судың берген жылу мөлшерін есептеу. <span class="chip mix">Есептеу</span></li>
+    <li>Суық судың алған жылу мөлшерін есептеу. <span class="chip mix">Есептеу</span></li>
+    <li>Берілген және алынған жылу мөлшерлерін салыстырып, жылу балансының орындалуын анықтау. <span class="chip warn">Талдау</span></li>
+    <li>Нәтижелер арасындағы айырмашылықтың себептерін талдау. <span class="chip warn">Талдау</span></li>
+  </ol>
+</section>
+
+<section class="card" id="s3" data-title="Гипотеза" data-no="3">
+  <h2>3. Гипотеза және физикалық негіздеме</h2>
+  <div class="hyp">
+    <span class="k k1">Егер</span> судың массасы үлкен болып, бастапқы температуралар айырмасы жоғары болса,
+    <span class="k k2">онда</span> жылу алмасу кезінде алмасатын жылу мөлшері артады, ал қорытынды температура массасы үлкен судың бастапқы температурасына жақын мәнді қабылдайды,
+    <span class="k k3">себебі</span> Q = cmΔt бойынша жылу мөлшері массаға және температура өзгерісіне тура пропорционал, ал жылу балансы Q₁ = Q₂ бойынша массасы үлкен судың температурасы аз өзгереді.
+  </div>
+  <h3>Физикалық негіздеме</h3>
+  <div class="formulas">
+    <div class="f"><div class="t">Жылу мөлшері</div><div class="e">Q = c·m·(t₂ − t₁)</div></div>
+    <div class="f"><div class="t">Ыстық су берген жылу</div><div class="e" style="color:var(--hot)">Q₁ = c·m₁·(t₁ − t)</div></div>
+    <div class="f"><div class="t">Суық су алған жылу</div><div class="e" style="color:var(--cold)">Q₂ = c·m₂·(t − t₂)</div></div>
+    <div class="f"><div class="t">Жылу балансы (энергияның сақталу заңы)</div><div class="e">Q₁ = Q₂</div></div>
+    <div class="f" style="grid-column:1/-1"><div class="t">Балансқа қойып, соңғы температураны өрнектейміз (c қысқарады)</div><div class="e" style="color:var(--mix)">c·m₁·(t₁ − t) = c·m₂·(t − t₂) &nbsp;⇒&nbsp; t = (m₁·t₁ + m₂·t₂) / (m₁ + m₂)</div></div>
+  </div>
+  <p class="small muted">c = 4200 Дж/(кг·°C) судың меншікті жылу сыйымдылығы. Соңғы формула t мәні массалар бойынша орташа екенін көрсетеді, сондықтан t массасы үлкен суға жақын болады. Гипотезаны <a href="#s9">9-бөлімдегі тәуелділік графигінде</a> тексеруге болады.</p>
+</section>
+
+<section class="card" id="s4" data-title="Шамалар" data-no="4">
+  <h2>4. Тәуелсіз, тәуелді және тұрақты шамалар</h2>
+  <div class="vars">
+    <div class="var v1"><h4><span class="chip cold">Тәуелсіз</span> өзгертеміз</h4>
+      <ul><li>ыстық судың массасы m₁, кг</li><li>ыстық судың температурасы t₁, °C</li><li>суық судың массасы m₂, кг</li><li>суық судың температурасы t₂, °C</li></ul></div>
+    <div class="var v2"><h4><span class="chip mix">Тәуелді</span> өлшейміз, есептейміз</h4>
+      <ul><li>қоспаның соңғы температурасы t, °C</li><li>ыстық су берген жылу Q₁, Дж</li><li>суық су алған жылу Q₂, Дж</li></ul></div>
+    <div class="var v3"><h4><span class="chip">Тұрақты</span> өзгертпейміз</h4>
+      <ul><li>судың меншікті жылу сыйымдылығы c = 4200 Дж/(кг·°C)</li><li>бір калориметр, бір термометр</li><li>араластыру тәсілі мен уақыты</li></ul></div>
+  </div>
+</section>
+
+<section class="card" id="s5" data-title="Құралдар" data-no="5">
+  <h2>5. Құралдар мен қондырғы сызбасы</h2>
+  <div class="two">
+    <ul class="inst" id="instList">
+      <li data-i="1"><b>1</b>Калориметр (ішкі және сыртқы ыдыс)</li>
+      <li data-i="2"><b>2</b>Цилиндр мензурка (көлемді өлшеу үшін)</li>
+      <li data-i="3"><b>3</b>Термометр (0…100 °C, бөлік құны 1 °C)</li>
+      <li data-i="4"><b>4</b>Ыстық суы бар шәйнек</li>
+      <li data-i="5"><b>5</b>Суық суы бар ыдыс</li>
+      <li data-i="6"><b>6</b>Қайнаған суға арналған ыдыс</li>
+      <li data-i="7"><b>7</b>Араластырғыш (шыны таяқша)</li>
+    </ul>
+    <div class="scheme">
+      <svg viewBox="0 0 460 290" width="100%" id="schemeSvg">
+        <line x1="10" y1="262" x2="450" y2="262" style="stroke:var(--muted)" stroke-width="2"/>
+        <!-- kettle -->
+        <g><path d="M20 250 Q20 190 60 185 L90 185 Q120 190 120 250 Z" style="fill:var(--bg2);stroke:var(--ink2)" stroke-width="2"/>
+          <path d="M120 215 L145 195" style="stroke:var(--ink2)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M40 185 Q70 160 100 185" fill="none" style="stroke:var(--ink2)" stroke-width="3"/>
+          <path d="M60 210 q5-8 0-16 M75 210 q5-8 0-16" style="stroke:var(--hot)" fill="none" stroke-width="2" opacity=".7"/></g>
+        <!-- hot vessel -->
+        <g><path d="M160 190 L160 258 L210 258 L210 190" fill="none" style="stroke:var(--ink2)" stroke-width="2.5"/>
+          <rect x="162" y="212" width="46" height="44" style="fill:var(--hot)" opacity=".55"/></g>
+        <!-- cold vessel -->
+        <g><path d="M225 190 L225 258 L275 258 L275 190" fill="none" style="stroke:var(--ink2)" stroke-width="2.5"/>
+          <rect x="227" y="215" width="46" height="41" style="fill:var(--cold)" opacity=".55"/></g>
+        <!-- cylinder -->
+        <g><path d="M295 120 L295 258 L320 258 L320 120" fill="none" style="stroke:var(--ink2)" stroke-width="2.5"/>
+          <path d="M295 140h8M295 160h12M295 180h8M295 200h12M295 220h8M295 240h12" style="stroke:var(--ink2)"/>
+          <rect x="297" y="190" width="21" height="66" style="fill:var(--cold)" opacity=".35"/>
+          <path d="M285 258 L330 258" style="stroke:var(--ink2)" stroke-width="4"/></g>
+        <!-- calorimeter -->
+        <g><path d="M345 140 L345 258 L445 258 L445 140" fill="none" style="stroke:var(--ink2)" stroke-width="3"/>
+          <path d="M357 150 L357 248 L433 248 L433 150" fill="none" style="stroke:var(--muted)" stroke-width="2" stroke-dasharray="5 3"/>
+          <rect x="359" y="190" width="72" height="56" style="fill:var(--mix)" opacity=".45"/>
+          <rect x="405" y="70" width="8" height="160" rx="4" style="fill:var(--card);stroke:var(--ink2)" stroke-width="2"/>
+          <rect x="407.5" y="150" width="3" height="80" style="fill:var(--hot)"/><circle cx="409" cy="233" r="7" style="fill:var(--hot)"/>
+          <line x1="378" y1="80" x2="378" y2="238" style="stroke:var(--ink2)" stroke-width="3"/><circle cx="378" cy="238" r="4" style="fill:var(--ink2)"/></g>
+        <g class="lbl" data-i="4"><circle cx="70" cy="150" r="11"/><text x="70" y="154" text-anchor="middle">4</text></g>
+        <g class="lbl" data-i="6"><circle cx="185" cy="170" r="11"/><text x="185" y="174" text-anchor="middle">6</text></g>
+        <g class="lbl" data-i="5"><circle cx="250" cy="170" r="11"/><text x="250" y="174" text-anchor="middle">5</text></g>
+        <g class="lbl" data-i="2"><circle cx="307" cy="100" r="11"/><text x="307" y="104" text-anchor="middle">2</text></g>
+        <g class="lbl" data-i="7"><circle cx="378" cy="60" r="11"/><text x="378" y="64" text-anchor="middle">7</text></g>
+        <g class="lbl" data-i="3"><circle cx="425" cy="50" r="11"/><text x="425" y="54" text-anchor="middle">3</text></g>
+        <g class="lbl" data-i="1"><circle cx="395" cy="278" r="11"/><text x="395" y="282" text-anchor="middle">1</text></g>
+      </svg>
+    </div>
+  </div>
+  <p class="small muted" style="margin-top:10px">Массаны мензуркамен көлем арқылы табамыз: m = ρ·V, судың тығыздығы ρ = 1000 кг/м³, сондықтан 1 мл су 1 г немесе 0,001 кг болады. Мысалы, 150 мл су m = 0,15 кг.</p>
+</section>
+
+<section class="card" id="s6" data-title="Өлшеу реті мен кесте" data-no="6">
+  <h2>6. Өлшеу реті, өлшем бірліктері және нәтиже кестесі</h2>
+  <div class="two">
+    <div>
+      <h3 style="margin-top:0">Тәжірибені орындау реті</h3>
+      <ol class="steps">
+        <li data-n="1">Ыстық судың массасын m₁ өлшеу.<small>Мензуркамен көлемін өлшеп, кг-ға айналдырамыз.</small></li>
+        <li data-n="2">Ыстық судың бастапқы температурасын t₁ өлшеу.</li>
+        <li data-n="3">Суық судың массасын m₂ өлшеу.</li>
+        <li data-n="4">Суық судың бастапқы температурасын t₂ өлшеу.</li>
+        <li data-n="5">Ыстық және суық суды калориметрде араластыру.<small>Араластырғышпен 20…30 секунд ақырын араластырамыз.</small></li>
+        <li data-n="6">Қоспаның температурасы тұрақталған кезде соңғы температураны t өлшеу.<small>Модельдегі термометр графигі неге күту керек екенін көрсетеді.</small></li>
+        <li data-n="7">Тәжірибені 3 рет қайталап, нәтижелерді кестеге енгізу.<small>Әр қайталауда массаларды немесе температураларды өзгертеміз.</small></li>
+        <li data-n="8">Ыстық судың берген және суық судың алған жылу мөлшерлерін есептеп, салыстыру.</li>
+      </ol>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Өлшем бірліктері</h3>
+      <div class="units">
+        <div>Масса <b>m</b>, кг</div><div>Температура <b>t</b>, °C</div><div>Жылу мөлшері <b>Q</b>, Дж</div><div>Меншікті жылу сыйымдылығы <b>c</b>, Дж/(кг·°C)</div>
+      </div>
+      <h3>Қайталау саны</h3>
+      <p class="small">Кемінде 3 тәжірибе. Әр тәжірибеде t мәнін термометр көрсеткіші 10…15 секунд өзгермей тұрғанда жазамыз.</p>
+    </div>
+  </div>
+  <h3>Нәтижелерді тіркеуге арналған кесте</h3>
+  <p class="small muted">Жасыл бағандарға тәжірибеде өлшенген мәндерді енгізіңіз. Q₁, Q₂ тәжірибе деректерінен автоматты есептеледі. Күлгін баған модельдің болжамы. Деректер осы браузерде сақталады.</p>
+  <div class="tablewrap">
+    <table id="expTable">
+      <thead><tr>
+        <th>№</th><th class="x">m₁, кг</th><th class="x">t₁, °C</th><th class="x">m₂, кг</th><th class="x">t₂, °C</th><th class="x">t, °C<br><small>өлшенген</small></th>
+        <th>Q₁, Дж</th><th>Q₂, Дж</th><th>|Q₁−Q₂|/Q₁</th><th class="m">t, °C<br><small>модель</small></th><th></th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+    <button class="btn soft small" id="addRow">+ Тәжірибе қосу</button>
+    <button class="btn soft small" id="csvBtn">CSV жүктеу</button>
+    <button class="btn soft small" id="clearTbl">Кестені тазалау</button>
+  </div>
+</section>
+
+<section class="card" id="s7" data-title="Қауіпсіздік" data-no="7">
+  <h2>7. Қауіпсіздік ережелері</h2>
+  <ul class="safety" id="safety"></ul>
+</section>
+
+<section class="card" id="s8" data-title="Интерактивті модель" data-no="8">
+  <h2>8. Интерактивті модель</h2>
+  <p class="small muted" style="margin-top:-6px">Параметрлерді өзгертіңіз: нәтижелер мен графиктер бірден жаңарады. «Ойнату» батырмасы құю, жылу алмасу және тепе-теңдік кезеңдерін көрсетеді. Уақыт жолағын қолмен де жылжытуға болады.</p>
+  <div class="stagecard" style="margin-bottom:16px">
+        <div class="stagebar">
+          <div class="phase"><span class="dot" id="phDot"></span><span id="phText">Дайындық</span></div>
+          <div class="seg" id="speedSeg"><button data-s="0.5">0.5×</button><button data-s="1" class="on">1×</button><button data-s="2">2×</button></div>
+          <button class="btn soft small" id="resetBtn" title="Басынан">Басынан</button>
+          <button class="play" id="playBtn" title="Ойнату / тоқтату"><svg id="playIco" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+        </div>
+        <canvas id="stage"></canvas>
+        <div class="scrub"><span class="small muted">Уақыт</span><input type="range" id="scrub" min="0" max="60" step="0.1" value="0"><span class="tm" id="tm">0,0 с</span></div>
+      </div>
+  <div class="lab">
+    <div class="ctrls">
+      <div class="ctrl h"><div class="top"><span>Ыстық су массасы m₁</span><span><input type="number" id="n_m1" step="0.01"><span class="u">кг</span></span></div><input type="range" id="m1" min="0.05" max="0.5" step="0.01"></div>
+      <div class="ctrl h"><div class="top"><span>Ыстық су температурасы t₁</span><span><input type="number" id="n_t1" step="1"><span class="u">°C</span></span></div><input type="range" id="t1" min="30" max="90" step="1"></div>
+      <div class="ctrl c"><div class="top"><span>Суық су массасы m₂</span><span><input type="number" id="n_m2" step="0.01"><span class="u">кг</span></span></div><input type="range" id="m2" min="0.05" max="0.5" step="0.01"></div>
+      <div class="ctrl c"><div class="top"><span>Суық су температурасы t₂</span><span><input type="number" id="n_t2" step="1"><span class="u">°C</span></span></div><input type="range" id="t2" min="2" max="30" step="1"></div>
+      <label class="switch"><span>Нақты жағдай: ыдыс пен жылу шығыны</span><input type="checkbox" id="real"><span class="tg"></span></label>
+      <div class="realbox" id="realbox">
+        <div class="ctrl r"><div class="top"><span>Калориметрдің жылу сыйымдылығы C</span><span><input type="number" id="n_Cc" step="5"><span class="u">Дж/°C</span></span></div><input type="range" id="Cc" min="0" max="200" step="5"></div>
+        <div class="ctrl r"><div class="top"><span>Ауаға кететін жылу шығыны</span><span><input type="number" id="n_k" step="1"><span class="u">%</span></span></div><input type="range" id="k" min="0" max="20" step="1"></div>
+      </div>
+      <div>
+        <div class="small muted" style="margin-bottom:6px">Дайын сценарийлер</div>
+        <div class="presets">
+          <button class="btn soft small" data-p="0.15,60,0.15,15">Массалар тең</button>
+          <button class="btn soft small" data-p="0.40,60,0.10,15">Ыстық су көп</button>
+          <button class="btn soft small" data-p="0.10,60,0.40,15">Суық су көп</button>
+          <button class="btn soft small" data-p="0.20,80,0.20,5">Үлкен Δt</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h3>Температураның уақытқа тәуелділігі <span class="chip mix">МОДЕЛЬ</span></h3>
+        <div class="legend">
+          <span><i style="background:var(--hot)"></i>ыстық су бөлігі</span>
+          <span><i style="background:var(--cold)"></i>суық су бөлігі</span>
+          <span><i style="background:var(--ink)"></i>термометр көрсеткіші</span>
+          <span style="color:var(--mix)"><i class="d" style="color:var(--mix)"></i>соңғы t (модель)</span>
+        </div>
+        <div class="chartwrap"><svg id="chTime"></svg></div>
+        <p class="small muted">Термометр бірден тепе-теңдік мәнін көрсетпейді, ол біртіндеп жетеді. Сондықтан t мәнін көрсеткіш тұрақталғанда жазамыз (6-қадам).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="readouts">
+    <div class="ro mix"><span class="badge">МОДЕЛЬ</span><div class="k">Соңғы температура t</div><div class="v" id="rTheta">-</div><div class="s" id="rThetaS"></div></div>
+    <div class="ro hot"><div class="k">Ыстық су берген Q₁</div><div class="v" id="rQ1">-</div><div class="s" id="rQ1s"></div></div>
+    <div class="ro cold"><div class="k">Суық су алған Q₂</div><div class="v" id="rQ2">-</div><div class="s" id="rQ2s"></div></div>
+    <div class="ro"><div class="k">Жылу балансы</div><div class="v" id="rBal">-</div><div class="s" id="rBalS"></div></div>
+  </div>
+  <div style="margin-top:10px"><button class="askai" data-ask="Модельдің қазіргі нәтижесін түсіндірші: неге соңғы температура дәл осындай шықты және Q₁ мен Q₂ неге осындай?">ИИ-ден осы нәтижені түсіндіруді сұрау</button></div>
+</section>
+
+<section class="card" id="s9" data-title="Нәтиже мен графиктер" data-no="9">
+  <h2>9. Нәтиже, есептеу формуласы және графиктер</h2>
+  <div class="two">
+    <div class="panel">
+      <h3>Қадамдап есептеу <span class="chip mix">МОДЕЛЬ</span></h3>
+      <div class="calc" id="calcSteps"></div>
+    </div>
+    <div class="panel">
+      <h3>Жылу қайда кетті?</h3>
+      <div class="ebars" id="ebars"></div>
+      <div class="balance" id="balance"></div>
+    </div>
+  </div>
+
+  <div class="two" style="margin-top:18px">
+    <div class="panel">
+      <h3>Гипотезаны тексеру: тәуелділік графигі</h3>
+      <div class="selrow">
+        <span>Көлденең ось:</span>
+        <select id="xSel"><option value="m1">m₁, ыстық су массасы</option><option value="m2">m₂, суық су массасы</option><option value="t1">t₁, ыстық су температурасы</option><option value="t2">t₂, суық су температурасы</option></select>
+        <span>Тік ось:</span>
+        <select id="ySel"><option value="th">t, соңғы температура</option><option value="Q">Q₁, берілген жылу</option></select>
+      </div>
+      <div class="legend" id="expLegend"></div>
+      <div class="chartwrap"><svg id="chExp"></svg></div>
+      <div class="hypcheck" id="hypCheck"></div>
+    </div>
+    <div class="panel">
+      <h3>Иінтірек ұқсастығы: t қай жаққа жақын?</h3>
+      <p class="small muted" style="margin-top:0">Массалар иінтіректің екі ұшына ілінген жүк сияқты. Тірек нүктесі соңғы температура t. Теңдік m₁·(t₁ − t) = m₂·(t − t₂) иінтіректің тепе-теңдік шарты сияқты.</p>
+      <div class="chartwrap"><svg id="lever" viewBox="0 0 420 260"></svg></div>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s10" data-title="Болжам мен өлшем" data-no="10">
+  <h2>10. Модельдің болжамы және тәжірибеде өлшенген мән</h2>
+  <div class="cmp">
+    <div class="cmpcol m"><h3><span class="chip mix">МОДЕЛЬ</span> болжамы</h3>
+      <p class="small">Формула бойынша есептелген идеал мән: жылу тек су арасында алмасады деп есептейміз.</p>
+      <ul><li>t = (m₁t₁ + m₂t₂)/(m₁ + m₂)</li><li>Q₁ = Q₂ дәл орындалады</li><li>өлшеу қателігі жоқ</li></ul></div>
+    <div class="cmpcol x"><h3><span class="chip exp">ТӘЖІРИБЕ</span> нәтижесі</h3>
+      <p class="small">Термометрмен өлшенген нақты мән. Оған әсер ететін факторлар:</p>
+      <ul><li>калориметр ыдысы жылудың бір бөлігін алады</li><li>жылу ауаға және үстелге кетеді</li><li>термометрдің бөлік құны ±0,5 °C</li><li>құю кезінде ыстық су суып үлгереді</li></ul></div>
+  </div>
+  <div class="panel" style="margin-top:14px">
+    <h3>Әр тәжірибе бойынша салыстыру</h3>
+    <div class="legend"><span><i style="background:var(--mix);height:10px"></i>t модель</span><span><i style="background:var(--exp);height:10px"></i>t өлшенген</span></div>
+    <div class="chartwrap"><svg id="chCmp"></svg></div>
+    <div class="verdict" id="verdict"></div>
+    <div style="margin-top:10px"><button class="askai" data-ask="Кестедегі тәжірибе нәтижелерімді модельдің болжамымен салыстырып талдашы. Айырма қандай және оның себептері не?">ИИ-ден тәжірибе нәтижесін талдауды сұрау</button></div>
+  </div>
+</section>
+
+<section class="card" id="s11" data-title="Өзара тексеру, қорғау" data-no="11">
+  <h2>11. Өзара тексеру, түзету және қорғау</h2>
+  <div class="two">
+    <div>
+      <h3 style="margin-top:0">Басқа топқа берген кері байланысымыз</h3>
+      <textarea id="note1" placeholder="Қай топ, қандай ескерту, неге..."></textarea>
+      <h3>Бізге берілген ескерту және енгізілген түзету</h3>
+      <textarea id="note2" placeholder="Ескерту: ...&#10;Түзету: ..."></textarea>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Қорғау жоспары (2…3 минут)</h3>
+      <ol class="steps">
+        <li data-n="1">Зерттеу сұрағы мен гипотезаны айту.</li>
+        <li data-n="2">Модельде «Ыстық су көп» және «Суық су көп» сценарийлерін көрсету: t қай суға жақындайды.</li>
+        <li data-n="3">Q₁ мен Q₂ есебін қадамдап түсіндіру.</li>
+        <li data-n="4">Тәжірибе нәтижесін модельмен салыстырып, айырманың себебін «Нақты жағдай» режимімен көрсету.</li>
+      </ol>
+      <button class="askai" data-ask="Бізді қорғауға дайындашы: мұғалім қоюы мүмкін 3 сұрақты бір-бірден қой, мен жауап берейін, сосын бағала.">ИИ-мен қорғауға жаттығу</button>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="s12" data-title="ИИ көмекші" data-no="12">
+<h2>12. ИИ көмекші (Claude)</h2>
+<p class="small">Көмекші модельдің қазіргі мәндерін және кестедегі деректерді көреді. Жұмыс істеуі үшін Anthropic API кілтін енгізу керек.</p>
+<div class="ai open" id="ai">
+  <div class="aitools"><button id="aiSetBtn" type="button">Баптау (API кілті)</button> <button id="aiClear" type="button">Чатты тазалау</button></div>
+  <div class="aiset" id="aiSet">
+    <label>Anthropic API кілті</label>
+    <input type="password" id="aiKey" placeholder="sk-ant-..." autocomplete="off">
+    <label>Модель</label>
+    <div class="r"><select id="aiModel"></select><button class="btn soft small" id="aiLoadModels" type="button">Жүктеу</button></div>
+    <span class="muted" style="font-size:.76rem">Модельдер тізімі кілт арқылы Anthropic-тен жүктеледі.</span>
+  </div>
+  <div class="msgs" id="msgs"></div>
+  <div class="aichips" id="aiChips"></div>
+  <form class="aiin" id="aiForm">
+    <textarea id="aiText" rows="1" placeholder="Сұрағыңызды жазыңыз..."></textarea>
+    <button id="aiSend" type="submit" title="Жіберу">Жіберу</button>
+  </form>
+</div>
+</section>
+
+<footer>1-топ, №1 зертханалық жұмыс, физикадан жобалық жұмыс</footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+/* ==== ИИ БАПТАУЫ: кілтті осы жерге қойыңыз ==== */
+const API_KEY = "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";                 
+const API_MODEL = "";               // бос қалса, қолжетімді Sonnet моделі автоматты таңдалады
+/* ============================================== */
+const C_W = 4200;
+const $ = id => document.getElementById(id);
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem('lab1_'+k); return v===null?d:JSON.parse(v);}catch(e){return d;} },
+  set(k,v){ try{ localStorage.setItem('lab1_'+k,JSON.stringify(v)); }catch(e){} }
+};
+const fmt = (x,d=1) => (x===null||!isFinite(x)) ? "-" : Number(x).toFixed(d).replace(".",",").replace("-","−");
+const fmtQ = x => !isFinite(x) ? "-" : Math.round(x).toLocaleString("ru-RU").replace(/ /g," ").replace("-","−");
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ---------- THEME ---------- */
+let theme = 'light';
+function applyTheme(){ document.documentElement.setAttribute('data-theme',theme); cacheColors(); renderAll(); }
+
+/* ---------- STATE & PHYSICS ---------- */
+const S = Object.assign({m1:0.15,t1:60,m2:0.15,t2:15,real:false,Cc:80,k:5}, store.get('state',{}));
+function calc(s){
+  const k = s.real ? s.k/100 : 0, Cc = s.real ? s.Cc : 0;
+  const a = (1-k)*C_W*s.m1, b = C_W*s.m2 + Cc;
+  const th = (a*s.t1 + b*s.t2)/(a+b);
+  const thI = (s.m1*s.t1 + s.m2*s.t2)/(s.m1+s.m2);
+  const Q1 = C_W*s.m1*(s.t1-th), Q2 = C_W*s.m2*(th-s.t2), Qc = Cc*(th-s.t2), Ql = k*Q1;
+  return {th, thI, Q1, Q2, Qc, Ql, bal: Q1>0 ? (Q1-Q2)/Q1*100 : 0};
+}
+function tempColor(t, a=1){
+  const f = Math.max(0,Math.min(1,(t-0)/90));
+  const h = (220 + f*150) % 360;
+  return `hsla(${h},82%,${56 - f*4}%,${a})`;
+}
+
+/* timeline (model seconds) */
+const T_END = 60, POUR = 8, TAU = 6, TAU_TH = 3.2;
+let series = null;
+function buildSeries(){
+  const r = calc(S); const out = {s:[],hot:[],cold:[],th:[],wall:[]};
+  let tt = 20 + (S.t2-20)*0; tt = S.t2; // thermometer starts at cold-water temp
+  const dt = 0.1;
+  for(let s=0; s<=T_END+1e-9; s+=dt){
+    let hot, cold, wall;
+    if(s<POUR){ hot=S.t1; cold=S.t2; wall=S.t2; }
+    else { const e=Math.exp(-(s-POUR)/TAU); hot=r.th+(S.t1-r.th)*e; cold=r.th+(S.t2-r.th)*e; wall=S.t2+(r.th-S.t2)*(1-e); }
+    const poured = Math.min(1,s/POUR);
+    const target = poured>0 ? (S.m1*hot+S.m2*cold)/(S.m1+S.m2) : S.t2;
+    tt += (target-tt)*(poured>0.05 ? dt/TAU_TH : 0);
+    out.s.push(+s.toFixed(2)); out.hot.push(hot); out.cold.push(cold); out.th.push(tt); out.wall.push(wall);
+  }
+  series = out;
+}
+function at(arr, s){ const i = Math.max(0,Math.min(arr.length-1, Math.round(s/0.1))); return arr[i]; }
+
+/* ---------- CONTROLS ---------- */
+const keys = ['m1','t1','m2','t2','Cc','k'];
+keys.forEach(k=>{
+  const r=$(k), n=$('n_'+k);
+  r.value=S[k]; n.value=S[k];
+  r.addEventListener('input',()=>{ S[k]=+r.value; n.value=r.value; changed(); });
+  n.addEventListener('change',()=>{ let v=+n.value; if(!isFinite(v)) v=S[k]; v=Math.max(+r.min,Math.min(+r.max,v)); S[k]=v; r.value=v; n.value=v; changed(); });
+});
+$('real').checked = S.real; $('realbox').classList.toggle('on',S.real);
+$('real').addEventListener('change',e=>{ S.real=e.target.checked; $('realbox').classList.toggle('on',S.real); changed(); });
+document.querySelectorAll('[data-p]').forEach(b=>b.addEventListener('click',()=>{
+  const [a,b2,c,d]=b.dataset.p.split(',').map(Number);
+  Object.assign(S,{m1:a,t1:b2,m2:c,t2:d});
+  ['m1','t1','m2','t2'].forEach(k=>{$(k).value=S[k];$('n_'+k).value=S[k];});
+  changed(); setTime(0); play(true);
+}));
+
+let changeTimer=null;
+function changed(){
+  store.set('state',S);
+  buildSeries(); resetParticles();
+  renderAll();
+  if(anim.s<=0.01) { /* keep prep */ } else if(!anim.playing) setTime(T_END);
+}
+
+/* ---------- ANIMATION ---------- */
+const anim = {s:0, playing:false, speed:1, last:0};
+const cv = $('stage'), ctx = cv.getContext('2d');
+const LW = 960, LH = 430;
+let scale = 1, col = {};
+function cacheColors(){ ['--ink','--ink2','--muted','--line','--hot','--cold','--mix','--warn','--card','--stage','--glass','--glassline','--bg2','--exp'].forEach(k=>col[k]=css(k)); }
+function resize(){
+  const w = cv.clientWidth || cv.parentElement.clientWidth; const dpr = window.devicePixelRatio||1;
+  cv.width = Math.round(w*dpr); cv.height = Math.round(w*LH/LW*dpr);
+  cv.style.height = (w*LH/LW)+'px';
+  scale = cv.width/LW;
+}
+window.addEventListener('resize',()=>{resize(); renderCharts();});
+
+const G = {
+  hot:{x:60,y:215,w:130,h:160}, cold:{x:220,y:215,w:130,h:160},
+  cal:{x:560,y:150,w:300,h:232}, inner:{x:588,y:168,w:244,h:200},
+  floor:385
+};
+function srcLevel(which, s){ const m = which==='hot'?S.m1:S.m2; const full = 20 + m/0.5*125; return full*(1-Math.min(1,s/POUR)); }
+function calLevel(s){ const f=Math.min(1,s/POUR); return f*(18 + (S.m1+S.m2)/1.0*165); }
+function bez(p0,p1,p2,u){ const v=1-u; return {x:v*v*p0.x+2*v*u*p1.x+u*u*p2.x, y:v*v*p0.y+2*v*u*p1.y+u*u*p2.y}; }
+const streams = {
+  hot:[{x:190,y:222},{x:420,y:40},{x:660,y:175}],
+  cold:[{x:350,y:222},{x:520,y:95},{x:730,y:175}]
+};
+
+let parts = [];
+function resetParticles(){
+  parts = [];
+  const nh = Math.round(14 + S.m1*110), nc = Math.round(14 + S.m2*110);
+  const mk = (g,i,n)=>({g, x:0,y:0,vx:0,vy:0, tr: 0.25 + (i/n)*(POUR-1.3) + Math.random()*0.5, state:null});
+  for(let i=0;i<nh;i++) parts.push(mk('hot',i,nh));
+  for(let i=0;i<nc;i++) parts.push(mk('cold',i,nc));
+  parts.forEach(p=>{ const a=Math.random()*Math.PI*2; p.vx=Math.cos(a); p.vy=Math.sin(a); });
+}
+function region(p, s){
+  if(p.state==='src'){ const b=G[p.g]; const lv=srcLevel(p.g,s); return {x0:b.x+6,x1:b.x+b.w-6,y0:b.y+b.h-lv+4,y1:b.y+b.h-6}; }
+  const i=G.inner; const lv=calLevel(s); return {x0:i.x+8,x1:i.x+i.w-8,y0:i.y+i.h-lv+4,y1:i.y+i.h-6};
+}
+function placeRandom(p,s){ const r=region(p,s); p.x=r.x0+Math.random()*Math.max(1,r.x1-r.x0); p.y=r.y0+Math.random()*Math.max(1,r.y1-r.y0); }
+function partTemp(p,s){ return at(p.g==='hot'?series.hot:series.cold, s); }
+function stepParticles(dt, s){
+  parts.forEach(p=>{
+    let want = s < p.tr ? 'src' : (s < p.tr+0.9 ? 'fly' : 'cal');
+    if(want!==p.state){ p.state=want; if(want!=='fly') placeRandom(p,s); }
+    if(p.state==='fly'){ const u=(s-p.tr)/0.9; const q=bez(...streams[p.g],Math.max(0,Math.min(1,u))); p.x=q.x; p.y=q.y; return; }
+    const T = partTemp(p,s);
+    const sp = 18 + T*2.1;
+    p.vx += (Math.random()-.5)*0.6; p.vy += (Math.random()-.5)*0.6;
+    const n = Math.hypot(p.vx,p.vy)||1; p.vx/=n; p.vy/=n;
+    p.x += p.vx*sp*dt; p.y += p.vy*sp*dt;
+    const r=region(p,s);
+    if(r.y1-r.y0<3){ p.y=r.y1; return; }
+    if(p.x<r.x0){p.x=r.x0;p.vx=Math.abs(p.vx);} if(p.x>r.x1){p.x=r.x1;p.vx=-Math.abs(p.vx);}
+    if(p.y<r.y0){p.y=r.y0;p.vy=Math.abs(p.vy);} if(p.y>r.y1){p.y=r.y1;p.vy=-Math.abs(p.vy);}
+  });
+}
+
+function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function text(t,x,y,o={}){ ctx.font=`${o.w||600} ${o.size||14}px Arial, sans-serif`; ctx.fillStyle=o.c||col['--ink']; ctx.textAlign=o.a||'left'; ctx.textBaseline=o.b||'alphabetic'; ctx.fillText(t,x,y); }
+function pill(t,x,y,bg,fg,size=13){ ctx.font=`700 ${size}px "Courier New", monospace`; const w=ctx.measureText(t).width+18; rr(x-w/2,y-size-4,w,size+12,9); ctx.fillStyle=bg; ctx.fill(); ctx.fillStyle=fg; ctx.textAlign='center'; ctx.textBaseline='alphabetic'; ctx.fillText(t,x,y+1); return w; }
+
+function drawBeaker(b, level, T, label, sub, tint){
+  // liquid
+  if(level>0.5){
+    const g=ctx.createLinearGradient(0,b.y+b.h-level,0,b.y+b.h);
+    g.addColorStop(0,tempColor(T,.55)); g.addColorStop(1,tempColor(T,.8));
+    ctx.fillStyle=g; rr(b.x+3,b.y+b.h-level,b.w-6,level-3,6); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.35)'; ctx.fillRect(b.x+3,b.y+b.h-level,b.w-6,2);
+  }
+  // glass
+  ctx.strokeStyle=col['--glassline']; ctx.lineWidth=3; ctx.lineJoin='round';
+  ctx.beginPath(); ctx.moveTo(b.x-4,b.y-6); ctx.lineTo(b.x,b.y); ctx.lineTo(b.x,b.y+b.h-8); ctx.quadraticCurveTo(b.x,b.y+b.h,b.x+8,b.y+b.h);
+  ctx.lineTo(b.x+b.w-8,b.y+b.h); ctx.quadraticCurveTo(b.x+b.w,b.y+b.h,b.x+b.w,b.y+b.h-8); ctx.lineTo(b.x+b.w,b.y); ctx.lineTo(b.x+b.w+4,b.y-6); ctx.stroke();
+  ctx.fillStyle=col['--glass']; ctx.fillRect(b.x+6,b.y+8,6,b.h-24);
+  for(let i=1;i<5;i++){ ctx.strokeStyle=col['--glassline']; ctx.globalAlpha=.4; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(b.x+b.w-18,b.y+b.h-i*30); ctx.lineTo(b.x+b.w-4,b.y+b.h-i*30); ctx.stroke(); ctx.globalAlpha=1; }
+  text(label,b.x+b.w/2,b.y+b.h+22,{a:'center',w:700,c:tint});
+  text(sub,b.x+b.w/2,b.y+b.h+40,{a:'center',size:12,w:500,c:col['--muted']});
+}
+
+function drawStage(){
+  const s = anim.s, r = calc(S);
+  ctx.setTransform(scale,0,0,scale,0,0);
+  ctx.clearRect(0,0,LW,LH);
+  // table
+  ctx.fillStyle=col['--bg2']; ctx.fillRect(0,G.floor,LW,LH-G.floor);
+  ctx.strokeStyle=col['--line']; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(0,G.floor); ctx.lineTo(LW,G.floor); ctx.stroke();
+
+  // sources
+  drawBeaker(G.hot, srcLevel('hot',s), S.t1, 'Ыстық су', `m₁ = ${fmt(S.m1,2)} кг · t₁ = ${S.t1} °C`, col['--hot']);
+  drawBeaker(G.cold, srcLevel('cold',s), S.t2, 'Суық су', `m₂ = ${fmt(S.m2,2)} кг · t₂ = ${S.t2} °C`, col['--cold']);
+  pill(`${S.t1} °C`, G.hot.x+G.hot.w/2, G.hot.y-18, col['--hot'], '#fff');
+  pill(`${S.t2} °C`, G.cold.x+G.cold.w/2, G.cold.y-18, col['--cold'], '#fff');
+
+  // streams
+  if(s>0 && s<POUR){
+    ['hot','cold'].forEach(g=>{
+      const [a,b,c]=streams[g]; ctx.strokeStyle=tempColor(g==='hot'?S.t1:S.t2,.6); ctx.lineWidth=7; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.quadraticCurveTo(b.x,b.y,c.x,c.y); ctx.stroke();
+    });
+  }
+
+  // calorimeter
+  const C=G.cal, I=G.inner;
+  const wallT = S.real ? at(series.wall,s) : S.t2;
+  ctx.fillStyle = S.real && s>POUR ? tempColor(wallT,.18) : col['--glass'];
+  rr(C.x,C.y,C.w,C.h,16); ctx.fill();
+  ctx.strokeStyle=col['--glassline']; ctx.lineWidth=3; rr(C.x,C.y,C.w,C.h,16); ctx.stroke();
+  // insulation hatch
+  ctx.save(); rr(C.x,C.y,C.w,C.h,16); ctx.clip(); ctx.globalAlpha=.12; ctx.strokeStyle=col['--ink2']; ctx.lineWidth=1;
+  for(let i=-C.h;i<C.w;i+=12){ ctx.beginPath(); ctx.moveTo(C.x+i,C.y+C.h); ctx.lineTo(C.x+i+C.h,C.y); ctx.stroke(); } ctx.restore();
+  ctx.fillStyle=col['--stage']; rr(I.x,I.y,I.w,I.h,10); ctx.fill();
+  const lv = calLevel(s);
+  if(lv>1){
+    const avg = at(series.th,s)*0 + (S.m1*at(series.hot,s)+S.m2*at(series.cold,s))/(S.m1+S.m2);
+    ctx.fillStyle=tempColor(avg,.22); rr(I.x+3,I.y+I.h-lv,I.w-6,lv-3,8); ctx.fill();
+  }
+  ctx.strokeStyle = S.real && s>POUR ? tempColor(wallT,.9) : col['--glassline']; ctx.lineWidth=2.5; rr(I.x,I.y,I.w,I.h,10); ctx.stroke();
+  text('Калориметр', C.x+C.w/2, C.y+C.h+22, {a:'center',w:700});
+  text(S.real ? `ыдыс C = ${S.Cc} Дж/°C, шығын ${S.k}%` : 'идеал: жылу тек су арасында', C.x+C.w/2, C.y+C.h+40, {a:'center',size:12,w:500,c:col['--muted']});
+
+  // particles
+  parts.forEach(p=>{
+    if(p.state===null) return;
+    const T = partTemp(p,s);
+    ctx.beginPath(); ctx.arc(p.x,p.y, p.state==='fly'?3.2:3.6, 0, Math.PI*2);
+    ctx.fillStyle=tempColor(T,.95); ctx.fill();
+  });
+
+  // loss waves
+  if(S.real && S.k>0 && s>POUR){
+    const e=Math.exp(-(s-POUR)/TAU); const a=Math.min(.8,.15+ S.k/20*.7)*(0.3+0.7*e);
+    ctx.strokeStyle=`rgba(239,77,46,${a})`; ctx.lineWidth=2.5;
+    for(let j=0;j<3;j++){ const x=C.x+70+j*50, off=(performance.now()/400+j)%1*18; ctx.beginPath();
+      for(let y=0;y<34;y+=2){ const yy=C.y-8-y-off; const xx=x+Math.sin((y+off)/5)*5; y?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);} ctx.stroke(); }
+    text('жылу шығыны', C.x+C.w-6, C.y-14, {a:'right',size:12,c:col['--hot'],w:600});
+  }
+
+  // stirrer
+  const st = s>POUR ? Math.sin(performance.now()/260)*8 : 0;
+  ctx.strokeStyle=col['--ink2']; ctx.lineWidth=4; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(I.x+60+st, C.y-60); ctx.lineTo(I.x+60+st, I.y+I.h-14); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(I.x+44+st, I.y+I.h-14); ctx.lineTo(I.x+76+st, I.y+I.h-14); ctx.stroke();
+
+  // thermometer
+  const tx = I.x+I.w-48, ty0 = C.y-90, ty1 = I.y+I.h-30;
+  const tv = at(series.th,s);
+  rr(tx-8,ty0,16,ty1-ty0,8); ctx.fillStyle=col['--card']; ctx.fill(); ctx.strokeStyle=col['--ink2']; ctx.lineWidth=2; ctx.stroke();
+  const frac=Math.max(0,Math.min(1,tv/100)); const colH=(ty1-ty0-14)*frac;
+  ctx.fillStyle=col['--hot']; rr(tx-3,ty1-colH,6,colH+4,3); ctx.fill();
+  ctx.beginPath(); ctx.arc(tx,ty1+8,11,0,Math.PI*2); ctx.fillStyle=col['--hot']; ctx.fill(); ctx.strokeStyle=col['--ink2']; ctx.stroke();
+  for(let v=0;v<=100;v+=20){ const yy=ty1-(ty1-ty0-14)*v/100; ctx.strokeStyle=col['--ink2']; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(tx+8,yy); ctx.lineTo(tx+14,yy); ctx.stroke(); text(v,tx+17,yy+4,{size:10,c:col['--muted'],w:500}); }
+  // theta ghost marker
+  const gy = ty1-(ty1-ty0-14)*r.th/100;
+  ctx.setLineDash([4,3]); ctx.strokeStyle=col['--mix']; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(tx-26,gy); ctx.lineTo(tx-9,gy); ctx.stroke(); ctx.setLineDash([]);
+  // digital readout
+  pill(`t = ${fmt(tv,1)} °C`, tx-10, ty0-10, col['--ink'], col['--card'], 15);
+
+  // heat counters
+  if(s>POUR){
+    const e=1-Math.exp(-(s-POUR)/TAU);
+    const bx=G.hot.x, by=40;
+    ctx.fillStyle=col['--card']; rr(bx,by,300,92,14); ctx.fill(); ctx.strokeStyle=col['--line']; ctx.lineWidth=1.5; ctx.stroke();
+    text('Жылу алмасу', bx+14, by+24, {w:800,size:13});
+    text(`Ыстық су берді:  ${fmtQ(r.Q1*e)} Дж`, bx+14, by+48, {c:col['--hot'],size:13,w:700});
+    text(`Суық су алды:    ${fmtQ(r.Q2*e)} Дж`, bx+14, by+70, {c:col['--cold'],size:13,w:700});
+    // arrow hot->cold
+    const ax = bx+268, ay=by+46; ctx.strokeStyle=col['--mix']; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(ax,ay+22); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ax-6,ay+16); ctx.lineTo(ax,ay+24); ctx.lineTo(ax+6,ay+16); ctx.stroke();
+  } else {
+    text('Бөлшектердің түсі температураны, жылдамдығы жылулық қозғалысты көрсетеді', 20, 30, {size:12.5,c:col['--muted'],w:500});
+    text('(жылдамдық көрнекілік үшін үлкейтілген)', 20, 48, {size:12,c:col['--muted'],w:400});
+  }
+  // color scale
+  const sw=150, sx=388, sy=398;
+  const grd=ctx.createLinearGradient(sx,0,sx+sw,0); for(let i=0;i<=10;i++) grd.addColorStop(i/10,tempColor(i*9));
+  ctx.fillStyle=grd; rr(sx,sy,sw,8,4); ctx.fill();
+  text('0 °C',sx,sy+21,{size:10,c:col['--muted'],w:500}); text('90 °C',sx+sw,sy+21,{size:10,c:col['--muted'],w:500,a:'right'});
+}
+
+function phaseInfo(s){
+  if(s<=0.01) return ['Дайындық: суды өлшедік', col['--muted']];
+  if(s<POUR) return ['Құю: су калориметрге түсуде', col['--warn']];
+  if(s<POUR+3*TAU) return ['Жылу алмасу: ыстық су суып, суық су жылынуда', col['--mix']];
+  return ['Жылулық тепе-теңдік: t тұрақталды', col['--exp']];
+}
+let lastPhase='';
+function updateUIforTime(){
+  $('scrub').value=anim.s; $('tm').textContent=fmt(anim.s,1)+' с';
+  const [t,c]=phaseInfo(anim.s); if(t!==lastPhase){ $('phText').textContent=t; $('phDot').style.background=c;  lastPhase=t; }
+  moveTimeCursor();
+}
+function setTime(s){ anim.s=Math.max(0,Math.min(T_END,s)); updateUIforTime(); }
+function play(force){
+  if(anim.playing && !force){ anim.playing=false; }
+  else { if(anim.s>=T_END-0.01) setTime(0); anim.playing=true; }
+  $('playIco').innerHTML = anim.playing ? '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>' : '<path d="M8 5v14l11-7z"/>';
+}
+$('playBtn').onclick=()=>play();
+$('resetBtn').onclick=()=>{ anim.playing=false; play(false); anim.playing=false; $('playIco').innerHTML='<path d="M8 5v14l11-7z"/>'; setTime(0); resetParticles(); };
+$('scrub').addEventListener('input',e=>{ anim.playing=false; $('playIco').innerHTML='<path d="M8 5v14l11-7z"/>'; setTime(+e.target.value); });
+document.querySelectorAll('#speedSeg button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('#speedSeg button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); anim.speed=+b.dataset.s; });
+
+function loop(ts){
+  const dt = Math.min(0.05,(ts-(anim.last||ts))/1000); anim.last=ts;
+  if(anim.playing){ anim.s += dt*7*anim.speed; if(anim.s>=T_END){ anim.s=T_END; anim.playing=false; $('playIco').innerHTML='<path d="M8 5v14l11-7z"/>'; } updateUIforTime(); }
+  stepParticles(dt, anim.s);
+  drawStage();
+  requestAnimationFrame(loop);
+}
+
+/* ---------- CHART HELPER ---------- */
+function niceTicks(a,b,n=5){ const span=b-a||1; const s0=span/n; const mag=Math.pow(10,Math.floor(Math.log10(s0))); const r=s0/mag; const st=(r<1.5?1:r<3?2:r<7?5:10)*mag; const out=[]; for(let v=Math.ceil(a/st-1e-9)*st; v<=b+1e-9; v+=st) out.push(+v.toFixed(8)); return out; }
+const tip=$('tip');
+function showTip(html,e){ tip.innerHTML=html; tip.style.opacity=1; const x=e.clientX+14, y=e.clientY+14; tip.style.left=Math.min(x, innerWidth-tip.offsetWidth-8)+'px'; tip.style.top=Math.min(y, innerHeight-tip.offsetHeight-8)+'px'; }
+function hideTip(){ tip.style.opacity=0; }
+function chart(svg,o){
+  const W=o.w||560, H=o.h||280, m={l:50,r:14,t:14,b:42};
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const X=v=>m.l+(v-o.x[0])/(o.x[1]-o.x[0])*(W-m.l-m.r);
+  const Y=v=>H-m.b-(v-o.y[0])/(o.y[1]-o.y[0])*(H-m.t-m.b);
+  let h='';
+  (o.bands||[]).forEach(b=>{ h+=`<rect x="${X(b.x0)}" y="${m.t}" width="${X(b.x1)-X(b.x0)}" height="${H-m.t-m.b}" style="fill:${b.c}" opacity=".08"/><text x="${(X(b.x0)+X(b.x1))/2}" y="${m.t+13}" text-anchor="middle" class="tick" style="font-weight:700">${b.label}</text>`; });
+  niceTicks(o.y[0],o.y[1],o.yn||5).forEach(v=>{ h+=`<line class="grid" x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}"/><text class="tick" x="${m.l-7}" y="${Y(v)+4}" text-anchor="end">${o.fy?o.fy(v):fmt(v,0)}</text>`; });
+  niceTicks(o.x[0],o.x[1],o.xn||6).forEach(v=>{ h+=`<line class="axis" x1="${X(v)}" x2="${X(v)}" y1="${H-m.b}" y2="${H-m.b+4}"/><text class="tick" x="${X(v)}" y="${H-m.b+17}" text-anchor="middle">${o.fx?o.fx(v):fmt(v,0)}</text>`; });
+  h+=`<line class="axis" x1="${m.l}" x2="${W-m.r}" y1="${H-m.b}" y2="${H-m.b}"/><line class="axis" x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${H-m.b}"/>`;
+  h+=`<text class="albl" x="${(m.l+W-m.r)/2}" y="${H-6}" text-anchor="middle">${o.xl||''}</text><text class="albl" transform="translate(13 ${(m.t+H-m.b)/2}) rotate(-90)" text-anchor="middle">${o.yl||''}</text>`;
+  (o.hl||[]).forEach(l=>{ h+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(l.y)}" y2="${Y(l.y)}" style="stroke:${l.c}" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${W-m.r-4}" y="${Y(l.y)-5}" text-anchor="end" style="fill:${l.c};font:700 11px Arial">${l.label}</text>`; });
+  h+=`<defs><clipPath id="cp_${svg.id}"><rect x="${m.l}" y="0" width="${W-m.l-m.r}" height="${H}"/></clipPath></defs><g clip-path="url(#cp_${svg.id})">`;
+  o.series.forEach(se=>{ const d=se.pts.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)).join(''); h+=`<path d="${d}" fill="none" style="stroke:${se.c}" stroke-width="${se.w||2.6}" ${se.dash?'stroke-dasharray="6 5"':''} stroke-linejoin="round" stroke-linecap="round" opacity="${se.op||1}"/>`; });
+  h+='</g>';
+  (o.pts||[]).forEach(p=>{ h+=`<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="${p.r||6}" style="fill:${p.c};stroke:var(--card)" stroke-width="2.5"/>`; if(p.label) h+=`<text x="${X(p.x)+10}" y="${Y(p.y)-10}" style="fill:${p.c};font:800 12px Arial">${p.label}</text>`; });
+  h+=`<g class="hov" style="display:none"><line x1="0" x2="0" y1="${m.t}" y2="${H-m.b}" style="stroke:var(--muted)" stroke-dasharray="3 3"/>${o.series.filter(s=>!s.nohover).map(()=>'<circle r="4.5" style="stroke:var(--card)" stroke-width="2"/>').join('')}</g>`;
+  if(o.cursor) h+=`<g id="${svg.id}_cur"><line y1="${m.t}" y2="${H-m.b}" style="stroke:var(--ink)" stroke-width="1.5" opacity=".5"/></g>`;
+  h+=`<rect class="ov" x="${m.l}" y="${m.t}" width="${W-m.l-m.r}" height="${H-m.t-m.b}" fill="transparent"/>`;
+  svg.innerHTML=h;
+  const hs=o.series.filter(s=>!s.nohover), hov=svg.querySelector('.hov'), ov=svg.querySelector('.ov');
+  const interp=(pts,x)=>{ if(x<=pts[0][0]) return pts[0][1]; for(let i=1;i<pts.length;i++){ if(pts[i][0]>=x){ const a=pts[i-1],b=pts[i]; return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0]||1);} } return pts[pts.length-1][1]; };
+  ov.onmousemove=e=>{
+    const pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY; const loc=pt.matrixTransform(svg.getScreenCTM().inverse());
+    const xv=o.x[0]+(loc.x-m.l)/(W-m.l-m.r)*(o.x[1]-o.x[0]);
+    hov.style.display=''; hov.querySelector('line').setAttribute('x1',X(xv)); hov.querySelector('line').setAttribute('x2',X(xv));
+    const cs=hov.querySelectorAll('circle'); let html=`<div>${o.xl}: <b>${o.fx?o.fx(xv):fmt(xv,1)}</b></div>`;
+    hs.forEach((se,i)=>{ const yv=interp(se.pts,xv); cs[i].setAttribute('cx',X(xv)); cs[i].setAttribute('cy',Y(yv)); cs[i].style.fill=se.c; html+=`<div><span style="color:${se.tc||se.c}">●</span> ${se.name}: <b>${o.ft?o.ft(yv):fmt(yv,1)}</b></div>`; });
+    showTip(html,e);
+  };
+  ov.onmouseleave=()=>{ hov.style.display='none'; hideTip(); };
+  ov.onclick=o.onclick? (e=>{ const pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY; const loc=pt.matrixTransform(svg.getScreenCTM().inverse()); o.onclick(o.x[0]+(loc.x-m.l)/(W-m.l-m.r)*(o.x[1]-o.x[0])); }) : null;
+  return {X,Y};
+}
+
+/* ---------- CHARTS ---------- */
+let timeX=null;
+function renderTimeChart(){
+  const r=calc(S);
+  const toPts=a=>series.s.map((s,i)=>[s,a[i]]).filter((_,i)=>i%3===0);
+  const lo=Math.min(S.t2,S.t1)-4, hi=Math.max(S.t1,S.t2)+4;
+  const c=chart($('chTime'),{x:[0,T_END],y:[Math.max(0,Math.floor(lo)),Math.ceil(hi)],w:520,h:290,xl:'уақыт, с',yl:'t, °C',
+    fx:v=>fmt(v,0), ft:v=>fmt(v,1)+' °C',
+    bands:[{x0:0,x1:POUR,c:'var(--warn)',label:'құю'},{x0:POUR,x1:T_END,c:'var(--mix)',label:'жылу алмасу'}],
+    hl:[{y:r.th,c:'var(--mix)',label:'t = '+fmt(r.th,1)+' °C'}],
+    series:[
+      {pts:toPts(series.hot),c:'var(--hot)',tc:css('--hot'),name:'ыстық бөлік'},
+      {pts:toPts(series.cold),c:'var(--cold)',tc:css('--cold'),name:'суық бөлік'},
+      {pts:toPts(series.th),c:'var(--ink)',tc:css('--ink'),name:'термометр',w:3}
+    ], cursor:true, onclick:x=>{anim.playing=false;$('playIco').innerHTML='<path d="M8 5v14l11-7z"/>';setTime(x);} });
+  timeX=c.X; moveTimeCursor();
+}
+function moveTimeCursor(){ const g=$('chTime_cur'); if(!g||!timeX) return; const l=g.querySelector('line'); l.setAttribute('x1',timeX(anim.s)); l.setAttribute('x2',timeX(anim.s)); }
+
+const RANGES={m1:[0.05,0.5],m2:[0.05,0.5],t1:[30,90],t2:[2,30]};
+const XL={m1:'m₁, кг',m2:'m₂, кг',t1:'t₁, °C',t2:'t₂, °C'};
+function renderExplorer(){
+  const xv=$('xSel').value, yv=$('ySel').value;
+  const [a,b]=RANGES[xv]; const N=60;
+  const f=(sv,real)=>{ const r=calc(Object.assign({},S,{[xv]:sv,real})); return yv==='th'?r.th:r.Q1; };
+  const ideal=[], cur=[]; for(let i=0;i<=N;i++){ const v=a+(b-a)*i/N; ideal.push([v,f(v,false)]); cur.push([v,f(v,S.real)]); }
+  const all=ideal.concat(cur).map(p=>p[1]);
+  let lo=Math.min(...all), hi=Math.max(...all);
+  const hl=[];
+  if(yv==='th'){ lo=Math.min(lo,S.t2); hi=Math.max(hi,S.t1); if(xv!=='t1') hl.push({y:S.t1,c:'var(--hot)',label:'t₁ = '+S.t1+' °C'}); if(xv!=='t2') hl.push({y:S.t2,c:'var(--cold)',label:'t₂ = '+S.t2+' °C'}); }
+  const pad=(hi-lo)*.08||1; lo-=pad; hi+=pad; if(yv==='Q') lo=Math.min(0,lo);
+  const sr=[];
+  if(S.real) sr.push({pts:ideal,c:'var(--muted)',tc:css('--muted'),name:'идеал',dash:true,w:2});
+  sr.push({pts:cur,c:'var(--mix)',tc:css('--mix'),name:S.real?'нақты жағдай':'модель',w:3});
+  const now=calc(S); const yNow=yv==='th'?now.th:now.Q1;
+  chart($('chExp'),{x:[a,b],y:[lo,hi],w:420,h:310,xl:XL[xv],yl:yv==='th'?'t, °C':'Q₁, Дж',
+    fx:v=>xv[0]==='m'?fmt(v,2):fmt(v,0), fy:v=>yv==='Q'?(Math.abs(v)>=1000?fmt(v/1000,0)+'к':fmt(v,0)):fmt(v,0),
+    ft:v=>yv==='th'?fmt(v,1)+' °C':fmtQ(v)+' Дж', hl, series:sr,
+    pts:[{x:S[xv],y:yNow,c:'var(--hot)',label:yv==='th'?fmt(yNow,1)+'°':fmtQ(yNow)}],
+    onclick:v=>{ const r=$(xv); v=Math.round(v/(+r.step))*(+r.step); v=+Math.max(+r.min,Math.min(+r.max,v)).toFixed(2); S[xv]=v; r.value=v; $('n_'+xv).value=v; changed(); }
+  });
+  $('expLegend').innerHTML = (S.real?'<span style="color:var(--muted)"><i class="d" style="color:var(--muted)"></i>идеал модель</span>':'') + `<span><i style="background:var(--mix)"></i>${S.real?'нақты жағдай':'модель'}</span><span><i style="background:var(--hot);height:8px;width:8px;border-radius:50%"></i>қазіргі мән (графикті басып өзгертуге болады)</span>`;
+  // hypothesis check
+  const r=calc(S); const mid=(S.t1+S.t2)/2; let msg;
+  if(Math.abs(S.m1-S.m2)<0.005) msg=`Массалар тең, сондықтан идеал жағдайда t = ${fmt(r.thI,1)} °C температуралардың дәл ортасында.`+(S.real?` Нақты жағдайда жылу шығыны t мәнін ${fmt(r.th,1)} °C-қа дейін төмендетеді.`:'');
+  else { const big=S.m1>S.m2?'ыстық':'суық', ok=(S.m1>S.m2)===(r.thI>mid); msg=`${big==='ыстық'?'Ыстық':'Суық'} судың массасы үлкен, t = ${fmt(r.thI,1)} °C ортадан (${fmt(mid,1)} °C) ${r.thI>mid?'ыстық':'суық'} су жағына ығысты. ${ok?'Гипотеза расталады ✓':'Гипотезаға сәйкес емес'}`; }
+  $('hypCheck').innerHTML=`<span class="chip mix" style="flex:none">Гипотеза</span><span>${msg} Δt = t₁ − t₂ = ${S.t1-S.t2} °C, алмасқан жылу Q₂ = ${fmtQ(r.Q2)} Дж.</span>`;
+}
+$('xSel').onchange=renderExplorer; $('ySel').onchange=renderExplorer;
+
+function renderLever(){
+  const r=calc(S), svg=$('lever');
+  const x0=24, x1=400, T=v=>x0+(v-0)/(100)*(x1-x0);
+  const beamY=120;
+  const sz=m=>18+ m/0.5*42;
+  const sh=sz(S.m1), sc=sz(S.m2);
+  let h=`<line x1="${x0}" x2="${x1}" y1="215" y2="215" class="axis"/>`;
+  for(let v=0;v<=100;v+=10) h+=`<line x1="${T(v)}" x2="${T(v)}" y1="215" y2="221" class="axis"/><text x="${T(v)}" y="236" class="tick" text-anchor="middle">${v}</text>`;
+  h+=`<text x="${x1}" y="250" class="tick" text-anchor="end">температура, °C</text>`;
+  const grd=`<defs><linearGradient id="lg" x1="0" x2="1">${[0,.25,.5,.75,1].map(f=>`<stop offset="${f}" stop-color="${tempColor(f*100)}"/>`).join('')}</linearGradient></defs>`;
+  h=grd+`<rect x="${x0}" y="206" width="${x1-x0}" height="6" rx="3" fill="url(#lg)" opacity=".7"/>`+h;
+  // beam
+  h+=`<line x1="${T(S.t2)}" x2="${T(S.t1)}" y1="${beamY}" y2="${beamY}" style="stroke:var(--ink2)" stroke-width="5" stroke-linecap="round"/>`;
+  // arms labels
+  h+=`<text x="${(T(S.t2)+T(r.thI))/2}" y="${beamY-10}" text-anchor="middle" style="fill:var(--cold);font:700 11px Arial">${fmt(r.thI-S.t2,1)}°</text>`;
+  h+=`<text x="${(T(r.thI)+T(S.t1))/2}" y="${beamY-10}" text-anchor="middle" style="fill:var(--hot);font:700 11px Arial">${fmt(S.t1-r.thI,1)}°</text>`;
+  // weights
+  h+=`<line x1="${T(S.t2)}" x2="${T(S.t2)}" y1="${beamY}" y2="${beamY+14}" style="stroke:var(--ink2)" stroke-width="2"/><rect x="${T(S.t2)-sc/2}" y="${beamY+14}" width="${sc}" height="${sc*.8}" rx="7" style="fill:var(--cold)"/><text x="${T(S.t2)}" y="${beamY+14+sc*.4+4}" text-anchor="middle" style="fill:#fff;font:800 11px Arial">${fmt(S.m2,2)}</text>`;
+  h+=`<line x1="${T(S.t1)}" x2="${T(S.t1)}" y1="${beamY}" y2="${beamY+14}" style="stroke:var(--ink2)" stroke-width="2"/><rect x="${T(S.t1)-sh/2}" y="${beamY+14}" width="${sh}" height="${sh*.8}" rx="7" style="fill:var(--hot)"/><text x="${T(S.t1)}" y="${beamY+14+sh*.4+4}" text-anchor="middle" style="fill:#fff;font:800 11px Arial">${fmt(S.m1,2)}</text>`;
+  // fulcrum
+  const fx=T(r.thI);
+  h+=`<path d="M${fx} ${beamY+3} L${fx-13} ${beamY+30} L${fx+13} ${beamY+30} Z" style="fill:var(--mix)"/>`;
+  h+=`<line x1="${fx}" x2="${fx}" y1="${beamY+30}" y2="206" style="stroke:var(--mix)" stroke-dasharray="3 3"/>`;
+  h+=`<rect x="${fx-44}" y="${beamY-62}" width="88" height="26" rx="8" style="fill:var(--mix)"/><text x="${fx}" y="${beamY-44}" text-anchor="middle" style="fill:#fff;font:800 13px Arial">t=${fmt(r.thI,1)}°</text>`;
+  if(S.real && Math.abs(r.th-r.thI)>0.05){ const rx=T(r.th); h+=`<line x1="${rx}" x2="${rx}" y1="${beamY+36}" y2="206" style="stroke:var(--warn)" stroke-width="2"/><text x="${rx}" y="${beamY+50}" text-anchor="${rx<fx?'end':'start'}" dx="${rx<fx?-4:4}" style="fill:var(--warn);font:700 11px Arial">нақты ${fmt(r.th,1)}°</text>`; }
+  h+=`<text x="${x0}" y="22" class="albl">m₂·(t − t₂) = ${fmt(S.m2,2)}·${fmt(r.thI-S.t2,1)} = ${fmt(S.m2*(r.thI-S.t2),2)}</text>`;
+  h+=`<text x="${x0}" y="42" class="albl">m₁·(t₁ − t) = ${fmt(S.m1,2)}·${fmt(S.t1-r.thI,1)} = ${fmt(S.m1*(S.t1-r.thI),2)}</text>`;
+  svg.innerHTML=h;
+}
+
+function renderCalc(){
+  const r=calc(S), m1=fmt(S.m1,2), m2=fmt(S.m2,2);
+  let h='';
+  if(!S.real) h+=`<div class="cl mix"><span class="n">t</span><span>t = (m₁t₁ + m₂t₂)/(m₁ + m₂) = (${m1}·${S.t1} + ${m2}·${S.t2})/(${m1} + ${m2}) = <span class="r">${fmt(r.th,1)} °C</span></span></div>`;
+  else h+=`<div class="cl mix"><span class="n">t</span><span>t = ((1−k)cm₁t₁ + (cm₂ + C)t₂)/((1−k)cm₁ + cm₂ + C) = <span class="r">${fmt(r.th,1)} °C</span> <span class="muted">(идеал ${fmt(r.thI,1)} °C)</span></span></div>`;
+  h+=`<div class="cl hot"><span class="n">Q₁</span><span>Q₁ = c·m₁·(t₁ − t) = 4200·${m1}·(${S.t1} − ${fmt(r.th,1)}) = <span class="r">${fmtQ(r.Q1)} Дж</span></span></div>`;
+  h+=`<div class="cl cold"><span class="n">Q₂</span><span>Q₂ = c·m₂·(t − t₂) = 4200·${m2}·(${fmt(r.th,1)} − ${S.t2}) = <span class="r">${fmtQ(r.Q2)} Дж</span></span></div>`;
+  if(S.real) h+=`<div class="cl"><span class="n">Q ыдыс</span><span>Q = C·(t − t₂) = ${S.Cc}·(${fmt(r.th,1)} − ${S.t2}) = <span class="r">${fmtQ(r.Qc)} Дж</span>; шығын k·Q₁ = <span class="r">${fmtQ(r.Ql)} Дж</span></span></div>`;
+  h+=`<div class="cl"><span class="n">Салыст.</span><span>|Q₁ − Q₂| / Q₁ · 100% = <span class="r">${fmt(Math.abs(r.bal),1)} %</span></span></div>`;
+  $('calcSteps').innerHTML=h;
+}
+function renderEnergy(){
+  const r=calc(S), mx=Math.max(r.Q1,1);
+  const seg=(v,c,l)=> v>0.5?`<div class="seg2" style="width:${v/mx*100}%;background:${c}" title="${l}: ${fmtQ(v)} Дж">${v/mx>0.18?fmtQ(v):''}</div>`:'';
+  $('ebars').innerHTML=`
+   <div class="ebar"><div class="lab"><span style="color:var(--hot)">Ыстық су берді, Q₁</span><span class="mono">${fmtQ(r.Q1)} Дж</span></div><div class="track">${seg(r.Q1,'var(--hot)','Q₁')}</div></div>
+   <div class="ebar"><div class="lab"><span>Қайда кетті</span><span class="mono">${fmtQ(r.Q2+r.Qc+r.Ql)} Дж</span></div><div class="track">${seg(r.Q2,'var(--cold)','Суық су')}${seg(r.Qc,'var(--warn)','Калориметр ыдысы')}${seg(r.Ql,'#9aa3b5','Ауаға')}</div></div>
+   <div class="legend"><span><i style="background:var(--cold);height:10px"></i>суық су Q₂</span>${S.real?'<span><i style="background:var(--warn);height:10px"></i>калориметр ыдысы</span><span><i style="background:#9aa3b5;height:10px"></i>ауаға шығын</span>':''}</div>`;
+  const b=Math.abs(r.bal), cls=b<1?'ok':b<10?'mid':'bad';
+  $('balance').innerHTML=`<span class="pill ${cls}">${fmt(b,1)} %</span><span>${b<1?'Q₁ = Q₂: жылу балансы орындалды.':'Q₁ > Q₂: жылудың бір бөлігі суық суға жетпей ыдысқа және ауаға кетті.'}</span>`;
+}
+function renderReadouts(){
+  const r=calc(S);
+  $('rTheta').textContent=fmt(r.th,1)+' °C'; $('rThetaS').textContent=S.real?`идеал жағдайда ${fmt(r.thI,1)} °C`:'идеал жағдай';
+  $('rQ1').textContent=fmtQ(r.Q1)+' Дж'; $('rQ1s').textContent=`${S.t1} → ${fmt(r.th,1)} °C, суыды`;
+  $('rQ2').textContent=fmtQ(r.Q2)+' Дж'; $('rQ2s').textContent=`${S.t2} → ${fmt(r.th,1)} °C, жылынды`;
+  const b=Math.abs(r.bal); $('rBal').textContent=fmt(b,1)+' %'; $('rBal').style.color=b<1?'var(--exp)':b<10?'var(--warn)':'var(--hot)';
+  $('rBalS').textContent=b<1?'Q₁ = Q₂':'Q₁ мен Q₂ айырмасы';
+}
+
+/* ---------- TABLE ---------- */
+let rows = store.get('rows', null) || [{},{},{}];
+const F=['m1','t1','m2','t2','t'];
+function rowCalc(o){
+  const n=k=>(o[k]===''||o[k]===undefined)?NaN:parseFloat(String(o[k]).replace(',','.'));
+  const v={m1:n('m1'),t1:n('t1'),m2:n('m2'),t2:n('t2'),t:n('t')};
+  const okM=[v.m1,v.t1,v.m2,v.t2].every(isFinite) && v.m1+v.m2>0;
+  const model= okM?(v.m1*v.t1+v.m2*v.t2)/(v.m1+v.m2):NaN;
+  const Q1= okM&&isFinite(v.t)?C_W*v.m1*(v.t1-v.t):NaN, Q2= okM&&isFinite(v.t)?C_W*v.m2*(v.t-v.t2):NaN;
+  return {v,model,Q1,Q2,d:isFinite(Q1)&&Q1!==0?Math.abs(Q1-Q2)/Math.abs(Q1)*100:NaN};
+}
+function buildTable(){
+  const tb=document.querySelector('#expTable tbody'); tb.innerHTML='';
+  rows.forEach((o,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><b>${i+1}</b></td>`+F.map(k=>`<td class="x"><input data-i="${i}" data-k="${k}" inputmode="decimal" value="${o[k]??''}" placeholder="${k[0]==='m'?'0,15':'°C'}"></td>`).join('')+
+      `<td class="calc" id="q1_${i}">-</td><td class="calc" id="q2_${i}">-</td><td class="calc" id="d_${i}">-</td><td class="calc m" id="pm_${i}">-</td><td>${rows.length>3?`<button class="rowbtn" data-del="${i}" title="Өшіру">×</button>`:''}</td>`;
+    tb.appendChild(tr);
+  });
+  recalcTable();
+}
+function recalcTable(){
+  rows.forEach((o,i)=>{ const c=rowCalc(o);
+    $('q1_'+i).textContent=fmtQ(c.Q1); $('q2_'+i).textContent=fmtQ(c.Q2);
+    $('d_'+i).textContent=isFinite(c.d)?fmt(c.d,1)+' %':'-'; $('pm_'+i).textContent=fmt(c.model,1); });
+  renderCompare();
+}
+document.querySelector('#expTable').addEventListener('input',e=>{ const t=e.target; if(!t.dataset.k) return; rows[+t.dataset.i][t.dataset.k]=t.value; store.set('rows',rows); recalcTable(); });
+document.querySelector('#expTable').addEventListener('click',e=>{ const d=e.target.dataset.del; if(d===undefined) return; rows.splice(+d,1); store.set('rows',rows); buildTable(); });
+$('addRow').onclick=()=>{ rows.push({}); store.set('rows',rows); buildTable(); };
+$('clearTbl').onclick=()=>{ rows=[{},{},{}]; store.set('rows',rows); buildTable(); };
+$('csvBtn').onclick=()=>{
+  let s='№;m1, кг;t1, °C;m2, кг;t2, °C;t өлшенген, °C;Q1, Дж;Q2, Дж;айырма, %;t модель, °C\n';
+  rows.forEach((o,i)=>{ const c=rowCalc(o); s+=[i+1,o.m1||'',o.t1||'',o.m2||'',o.t2||'',o.t||'',isFinite(c.Q1)?Math.round(c.Q1):'',isFinite(c.Q2)?Math.round(c.Q2):'',isFinite(c.d)?c.d.toFixed(1):'',isFinite(c.model)?c.model.toFixed(1):''].join(';')+'\n'; });
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['﻿'+s],{type:'text/csv'})); a.download='natizheler.csv'; a.click();
+};
+
+function renderCompare(){
+  const svg=$('chCmp'); const data=rows.map((o,i)=>({i,...rowCalc(o)}));
+  const W=800,H=260,m={l:46,r:12,t:20,b:36};
+  const vals=data.flatMap(d=>[d.model,d.v.t]).filter(isFinite);
+  const hi=vals.length?Math.ceil(Math.max(...vals)/10)*10+5:60;
+  const Y=v=>H-m.b-v/hi*(H-m.t-m.b);
+  const gw=(W-m.l-m.r)/data.length, bw=Math.min(34,gw/3.2);
+  let h=''; niceTicks(0,hi,5).forEach(v=>h+=`<line class="grid" x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}"/><text class="tick" x="${m.l-6}" y="${Y(v)+4}" text-anchor="end">${v}</text>`);
+  h+=`<line class="axis" x1="${m.l}" x2="${W-m.r}" y1="${H-m.b}" y2="${H-m.b}"/><text class="albl" transform="translate(13 ${(H)/2}) rotate(-90)" text-anchor="middle">t, °C</text>`;
+  data.forEach((d,k)=>{
+    const cx=m.l+gw*k+gw/2;
+    h+=`<text class="tick" x="${cx}" y="${H-m.b+17}" text-anchor="middle">${k+1}-тәжірибе</text>`;
+    if(isFinite(d.model)){ h+=`<rect x="${cx-bw-2}" y="${Y(d.model)}" width="${bw}" height="${Y(0)-Y(d.model)}" rx="5" style="fill:var(--mix)"><title>модель ${fmt(d.model,1)} °C</title></rect><text x="${cx-bw/2-2}" y="${Y(d.model)-5}" text-anchor="middle" style="fill:var(--mix);font:700 11px Arial">${fmt(d.model,1)}</text>`; }
+    if(isFinite(d.v.t)){ h+=`<rect x="${cx+2}" y="${Y(d.v.t)}" width="${bw}" height="${Y(0)-Y(d.v.t)}" rx="5" style="fill:var(--exp)"><title>өлшенген ${fmt(d.v.t,1)} °C</title></rect><text x="${cx+bw/2+2}" y="${Y(d.v.t)-5}" text-anchor="middle" style="fill:var(--exp);font:700 11px Arial">${fmt(d.v.t,1)}</text>`; }
+    if(!isFinite(d.model)&&!isFinite(d.v.t)) h+=`<text x="${cx}" y="${Y(hi/2)}" text-anchor="middle" class="tick">деректер жоқ</text>`;
+  });
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.innerHTML=h;
+  const full=data.filter(d=>isFinite(d.model)&&isFinite(d.v.t));
+  let v;
+  if(!full.length) v='Кестеге кемінде бір тәжірибенің барлық мәндерін енгізгенде, мұнда модель мен өлшемнің айырмасы және қорытынды шығады.';
+  else {
+    const dd=full.map(d=>d.model-d.v.t), avg=dd.reduce((a,b)=>a+b,0)/dd.length, bal=full.map(d=>d.d).reduce((a,b)=>a+b,0)/full.length;
+    v=`<b>${full.length} тәжірибе бойынша:</b> модель мен өлшенген t айырмасы орташа ${fmt(avg,1)} °C, Q₁ мен Q₂ айырмасы орташа ${fmt(bal,1)} %. `;
+    v+= avg>0.3 ? 'Өлшенген t модельден төмен. Бұл калориметр ыдысы мен ауаға жылу кеткенін көрсетеді: «Нақты жағдай» режимінде C мен шығынды өзгертіп, дәл осындай айырманы алуға болады.'
+       : avg<-0.3 ? 'Өлшенген t модельден жоғары. Массаны (көлемді) және термометр көрсеткішін қайта тексеріңіз: жылу шығыны t мәнін тек төмендетеді.'
+       : 'Айырма термометрдің өлшеу дәлдігі шегінде, жылу балансы жақсы орындалды.';
+  }
+  $('verdict').innerHTML=v;
+}
+
+/* ---------- STATIC CONTENT ---------- */
+const SAFETY=[
+ ['Ыстық сумен жұмыс кезінде күйіп қалмау үшін абай болу.','fire'],
+ ['Ыстық суды ыдысқа баяу құю, шашыратпау.','drop'],
+ ['Ыдыстың тұрақты жерде орналасуын қадағалау.','box'],
+ ['Шыны сынса, сынықтарды қолмен жинауға болмайды, мұғалімге хабарлау керек.','glass'],
+ ['Термометрді ұқыпты пайдалану және соққыдан қорғау. Сынапты термометр сынса, сұйықты ұстауға болмайды, ұстаған жағдайда қолды дереу жуу керек.','therm'],
+ ['Су төгілген жағдайда оны бірден сүртіп, жұмыс орнын құрғақ ұстау.','drop'],
+ ['Тәжірибе аяқталғаннан кейін ыстық су мен құралдарды қауіпсіз жерге қою.','box']
+];
+const ICON={
+ fire:'<path d="M12 2c1 4 5 5 5 10a5 5 0 01-10 0c0-3 2-4 2-7 2 1 3 3 3 5 1-2 0-5 0-8z"/>',
+ drop:'<path d="M12 3s6 7 6 11a6 6 0 01-12 0c0-4 6-11 6-11z"/>',
+ box:'<path d="M4 20h16M6 20V9l6-5 6 5v11"/>',
+ glass:'<path d="M6 3h12l-2 18H8zM9 8l3 3-2 3 3 3"/>',
+ therm:'<path d="M10 4a2 2 0 014 0v10a4 4 0 11-4 0z"/>'
+};
+$('safety').innerHTML=SAFETY.map(([t,i])=>`<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" style="color:var(--hot)">${ICON[i]}</svg><span>${t}</span></li>`).join('');
+
+const SECT=[...document.querySelectorAll('section.card')];
+$('sidenav').innerHTML=SECT.map(s=>`<li><a href="#${s.id}">${s.dataset.title}</a></li>`).join('');
+const REQ=[['s1','Зерттеу сұрағы'],['s2','Мақсат және 7 міндет'],['s3','«Егер…, онда…, себебі…» гипотеза'],['s4','Тәуелсіз, тәуелді, тұрақты шамалар'],['s5','Құралдар мен сызба'],['s6','Өлшеу реті, бірліктер, кесте'],['s7','Қауіпсіздік ережелері'],['s8','Модель: 4 параметр + нақты жағдай'],['s9','Формула, есептеу, графиктер'],['s10','Болжам мен өлшем бөлек']];
+const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ document.querySelectorAll('#sidenav a').forEach(a=>a.classList.toggle('on',a.dataset.id===e.target.id)); } }),{rootMargin:'-40% 0px -55% 0px'});
+SECT.forEach(s=>io.observe(s));
+
+// scheme highlight
+const hl=i=>{ document.querySelectorAll('#instList li').forEach(li=>li.classList.toggle('hl',li.dataset.i==i)); };
+document.querySelectorAll('.scheme .lbl, #instList li').forEach(el=>{ el.addEventListener('mouseenter',()=>hl(el.dataset.i)); el.addEventListener('mouseleave',()=>hl(-1)); });
+
+['note1','note2'].forEach(id=>{ $(id).value=store.get(id,''); $(id).addEventListener('input',e=>store.set(id,e.target.value)); });
+
+function renderCharts(){ renderTimeChart(); renderExplorer(); renderLever(); }
+function renderAll(){ if(!series) return; renderReadouts(); renderCalc(); renderEnergy(); renderCharts(); renderCompare(); }
+
+/* ---------- AI ASSISTANT ---------- */
+const ai=$('ai'), msgs=$('msgs');
+let history=[], busy=false;
+const CHIPS=['Гипотезамызды түсіндірші','Неге Q₁ ≠ Q₂ болуы мүмкін?','Қазіргі есепті тексер','Кестедегі нәтижемді талда','Қорғауға 3 сұрақ қой'];
+$('aiChips').innerHTML=CHIPS.map(c=>`<button type="button">${c}</button>`).join('');
+$('aiChips').onclick=e=>{ if(e.target.tagName==='BUTTON') send(e.target.textContent); };
+document.querySelectorAll('[data-openai]').forEach(b=>b.onclick=()=>toggleAI(true));
+document.querySelectorAll('[data-ask]').forEach(b=>b.onclick=()=>{ toggleAI(true); send(b.dataset.ask); });
+$('aiSetBtn').onclick=()=>$('aiSet').classList.toggle('on');
+$('aiClear').onclick=()=>{ history=[]; msgs.innerHTML=''; greet(); };
+function toggleAI(o){ if(!msgs.children.length) greet(); if(!getKey()) $('aiSet').classList.add('on'); $('ai').scrollIntoView({behavior:'smooth',block:'start'}); }
+function greet(){ addMsg('a','Сәлем! Мен осы зертханалық жұмыс бойынша көмекшімін. Модельдің қазіргі параметрлерін және кестедегі деректеріңізді көремін. Формуланы түсіндіріп, есепті тексеріп, қорғауға дайындауға көмектесе аламын.'); }
+const getKey=()=>API_KEY || store.get('key','');
+if(API_KEY){ const k=$('aiKey'); k.previousElementSibling.style.display='none'; k.style.display='none'; $('aiSetBtn').textContent='Баптау'; const intro=document.querySelector('#s12 > p.small'); if(intro) intro.textContent='Көмекші модельдің қазіргі мәндерін және кестедегі деректерді көреді.'; }
+if(API_MODEL){ store.set('model',API_MODEL); }
+$('aiKey').value=API_KEY?'':store.get('key',''); $('aiKey').addEventListener('change',e=>{ store.set('key',e.target.value.trim()); });
+function fillModels(list,sel){ const m=$('aiModel'); m.innerHTML=list.map(x=>`<option value="${x}">${x}</option>`).join(''); if(sel) m.value=sel; }
+fillModels(store.get('models',[]).length?store.get('models',[]):[store.get('model','')||'(кілт енгізіп, «Жүктеу» басыңыз)'], store.get('model',''));
+$('aiModel').onchange=e=>store.set('model',e.target.value);
+async function loadModels(){
+  const key=getKey(); if(!key) throw new Error('Алдымен API кілтін енгізіңіз.');
+  const r=await fetch('https://api.anthropic.com/v1/models?limit=100',{headers:{'x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'}});
+  if(!r.ok) throw new Error('Модельдер тізімі жүктелмеді ('+r.status+'). Кілтті тексеріңіз.');
+  const j=await r.json(); const ids=(j.data||[]).map(x=>x.id);
+  const pick=store.get('model','') && ids.includes(store.get('model','')) ? store.get('model','') : (ids.find(x=>/sonnet/.test(x))||ids[0]);
+  store.set('models',ids); store.set('model',pick); fillModels(ids,pick); return pick;
+}
+$('aiLoadModels').onclick=async()=>{ if(!API_KEY) store.set('key',$('aiKey').value.trim()); try{ await loadModels(); }catch(e){ addMsg('err',e.message); } };
+
+function ctxJSON(){
+  const r=calc(S);
+  return JSON.stringify({
+    model_parametrleri:{m1_kg:S.m1,t1_C:S.t1,m2_kg:S.m2,t2_C:S.t2,naqty_zhagday:S.real,kalorimetr_C_J_per_C:S.real?S.Cc:0,shygyn_pct:S.real?S.k:0},
+    model_natizhesi:{t_C:+r.th.toFixed(2),t_ideal_C:+r.thI.toFixed(2),Q1_J:Math.round(r.Q1),Q2_J:Math.round(r.Q2),Q_ydys_J:Math.round(r.Qc),Q_shygyn_J:Math.round(r.Ql),aiyrma_pct:+Math.abs(r.bal).toFixed(2)},
+    tazhiribe_kestesi:rows.map((o,i)=>{const c=rowCalc(o);return {no:i+1,m1:o.m1||null,t1:o.t1||null,m2:o.m2||null,t2:o.t2||null,t_olshengen:o.t||null,t_model:isFinite(c.model)?+c.model.toFixed(2):null,Q1:isFinite(c.Q1)?Math.round(c.Q1):null,Q2:isFinite(c.Q2)?Math.round(c.Q2):null};})
+  });
+}
+const SYS=`Сен мектеп физикасы бойынша мейірімді әрі нақты көмекшісің. Оқушылар №1 зертханалық жұмысты қорғайды: «Температуралары әртүрлі суды араластырғандағы жылу мөлшерлерін салыстыру».
+Негізгі физика: Q = c·m·Δt, c(су) = 4200 Дж/(кг·°C), Q₁ = c·m₁·(t₁ − t) ыстық су берген жылу, Q₂ = c·m₂·(t − t₂) суық су алған жылу, жылу балансы Q₁ = Q₂, сондықтан t = (m₁t₁ + m₂t₂)/(m₁ + m₂). Нақты тәжірибеде калориметр ыдысы мен ауаға жылу кетеді, сондықтан өлшенген t модельден сәл төмен және Q₂ < Q₁.
+Топтың гипотезасы: егер массасы үлкен және температуралар айырмасы жоғары болса, алмасатын жылу артады, ал соңғы температура массасы үлкен судың температурасына жақын болады.
+Ережелер: жауапты қазақ тілінде жаз (оқушы орысша сұраса, орысша). Қысқа жаз: 3…8 сөйлем немесе қысқа тізім. Есептегенде мәндерді формулаға қойып көрсет, бірліктерді жаз. «Модель болжамы» мен «тәжірибеде өлшенген мәнді» әрқашан бөлек ата. Кестеде дерек болмаса, оны ойдан шығарма. Қорғауға дайындағанда сұрақты бір-бірден қой және жауапты бағала. Сызықша (—) қолданба.
+Беттегі қазіргі деректер JSON түрінде әр сұрақпен бірге беріледі.`;
+function md(s){
+  s=s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  s=s.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`([^`]+)`/g,'<code>$1</code>');
+  const lines=s.split('\n'); let out='', inl=false;
+  lines.forEach(l=>{ const m=l.match(/^\s*[-*•]\s+(.*)/); if(m){ if(!inl){out+='<ul>';inl=true;} out+=`<li>${m[1]}</li>`; } else { if(inl){out+='</ul>';inl=false;} out+= l.replace(/^#+\s*/,'')? `${l.replace(/^#+\s*(.*)/,'<b>$1</b>')}<br>`:'<br>'; } });
+  if(inl) out+='</ul>'; return out.replace(/(<br>)+$/,'');
+}
+function addMsg(role,content){ const d=document.createElement('div'); d.className='msg '+(role==='u'?'u':role==='err'?'a err':'a'); if(role==='u') d.textContent=content; else d.innerHTML=md(content); msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d; }
+$('aiForm').onsubmit=e=>{ e.preventDefault(); const t=$('aiText').value.trim(); if(t) send(t); };
+$('aiText').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); $('aiForm').requestSubmit(); } });
+$('aiText').addEventListener('input',e=>{ e.target.style.height='auto'; e.target.style.height=Math.min(120,e.target.scrollHeight)+'px'; });
+
+async function send(text){
+  if(busy) return;
+  if(!API_KEY && $('aiKey').value.trim()) store.set('key',$('aiKey').value.trim());
+  const key=getKey();
+  addMsg('u',text); $('aiText').value=''; $('aiText').style.height='auto';
+  if(!key){ addMsg('err','ИИ көмекшіні қосу үшін баптауда Anthropic API кілтін енгізіңіз (console.anthropic.com).'); $('aiSet').classList.add('on'); return; }
+  busy=true; $('aiSend').disabled=true;
+  const bubble=addMsg('a',''); bubble.innerHTML='<span class="typing"><span></span><span></span><span></span></span>';
+  history.push({role:'user',content:`[Беттегі деректер: ${ctxJSON()}]\n\n${text}`});
+  try{
+    let model=store.get('model','');
+    if(!model || model.startsWith('(')) model=await loadModels();
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model,max_tokens:1200,system:SYS,messages:history,stream:true})});
+    if(!res.ok){ let t=''; try{ t=(await res.json()).error?.message||''; }catch(_){} throw new Error(`Қате ${res.status}. ${t}`); }
+    const rd=res.body.getReader(), dec=new TextDecoder(); let buf='', acc='';
+    while(true){
+      const {done,value}=await rd.read(); if(done) break;
+      buf+=dec.decode(value,{stream:true}); const parts=buf.split('\n'); buf=parts.pop();
+      for(const line of parts){ if(!line.startsWith('data:')) continue; const js=line.slice(5).trim(); if(!js) continue;
+        try{ const ev=JSON.parse(js); if(ev.type==='content_block_delta'&&ev.delta?.type==='text_delta'){ acc+=ev.delta.text; bubble.innerHTML=md(acc); msgs.scrollTop=msgs.scrollHeight; } if(ev.type==='error') throw new Error(ev.error?.message||'stream error'); }catch(err){ if(err.message&&!/JSON/.test(err.message)) throw err; } }
+    }
+    history.push({role:'assistant',content:acc||'...'});
+    if(history.length>20) history=history.slice(-20);
+  }catch(err){
+    history.pop(); bubble.className='msg a err';
+    bubble.innerHTML=md(/Failed to fetch/.test(err.message)?'Anthropic API-ге қосылу мүмкін болмады. Интернетті тексеріңіз.':err.message);
+  }finally{ busy=false; $('aiSend').disabled=false; }
+}
+
+/* ---------- INIT ---------- */
+document.documentElement.setAttribute('data-theme',theme);
+cacheColors(); resize(); buildSeries(); resetParticles(); buildTable(); renderAll(); updateUIforTime();
+requestAnimationFrame(loop);
+greet(); if(!getKey()) $('aiSet').classList.add('on');
+})();
+</script>
+</body>
+</html>
