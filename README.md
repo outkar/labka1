@@ -6,6 +6,7 @@ Kotlin · Jetpack Compose · Room · DataStore · Navigation Compose · MVVM
 
 - 📄 Есеп: [ESEP.md](ESEP.md)
 - 📱 Дайын APK: [release/Tapsyrmalar.apk](release/Tapsyrmalar.apk)
+- 🧩 MIT App Inventor нұсқасы: [appinventor/Tapsyrmalar.aia](appinventor/Tapsyrmalar.aia)
 
 ## Мүмкіндіктері
 
