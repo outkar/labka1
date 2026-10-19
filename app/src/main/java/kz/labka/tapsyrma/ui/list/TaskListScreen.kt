@@ -132,7 +132,7 @@ fun TaskListContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                placeholder = { Text("Атауы немесе сипаттамасы бойынша іздеу") },
+                placeholder = { Text("Тапсырманы іздеу") },
                 leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
                 trailingIcon = {
                     if (query.isNotEmpty()) {

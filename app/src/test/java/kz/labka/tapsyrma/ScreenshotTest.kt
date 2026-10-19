@@ -43,26 +43,28 @@ class ScreenshotTest {
 
     private val today = LocalDate.now()
 
+    private fun daysAgo(days: Long): Long = System.currentTimeMillis() - days * 86_400_000L
+
     private val sampleTasks = listOf(
         Task(
             id = 1, title = "Зертханалық жұмысты тапсыру",
             description = "Android қосымшасы, есеп және APK файл",
-            priority = Priority.HIGH, dueDate = today.plusDays(2), createdAt = 5,
+            priority = Priority.HIGH, dueDate = today.plusDays(2), createdAt = daysAgo(1),
         ),
         Task(
             id = 2, title = "Физикадан емтиханға дайындалу",
             description = "Электр тогы, Ом заңы, Кирхгоф ережелері",
-            priority = Priority.MEDIUM, dueDate = today, createdAt = 4,
+            priority = Priority.MEDIUM, dueDate = today, createdAt = daysAgo(2),
         ),
         Task(
             id = 3, title = "Кітапханаға кітап қайтару",
-            priority = Priority.LOW, dueDate = today.minusDays(1), createdAt = 3,
+            priority = Priority.LOW, dueDate = today.minusDays(1), createdAt = daysAgo(3),
         ),
         Task(
             id = 4, title = "Спорт залына бару",
-            description = "Кешкі 19:00", priority = Priority.LOW, dueDate = today.plusDays(10), createdAt = 2,
+            description = "Кешкі 19:00", priority = Priority.LOW, dueDate = today.plusDays(10), createdAt = daysAgo(4),
         ),
-        Task(id = 5, title = "Анаға қоңырау шалу", priority = Priority.MEDIUM, isDone = true, createdAt = 1),
+        Task(id = 5, title = "Анаға қоңырау шалу", priority = Priority.MEDIUM, isDone = true, createdAt = daysAgo(5)),
     )
 
     private fun capture(name: String, content: @Composable () -> Unit) {
