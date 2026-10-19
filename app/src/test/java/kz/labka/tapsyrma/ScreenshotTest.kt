@@ -31,7 +31,7 @@ import java.io.File
 import java.time.LocalDate
 
 /**
- * Есепке арналған экран суреттерін жасайды: app/build/screenshots/*.png.
+ * Есепке арналған экран суреттерін жасайды: app/build/screenshots қалтасындағы PNG файлдар.
  * Экрандар ViewModel-сіз, дайын күймен көрсетіледі.
  */
 @RunWith(AndroidJUnit4::class)
