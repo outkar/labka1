@@ -1,11 +1,10 @@
 package kz.labka.tapsyrma
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.test.captureToImage
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onRoot
+import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kz.labka.tapsyrma.data.Priority
 import kz.labka.tapsyrma.data.Task
@@ -40,7 +39,7 @@ import java.time.LocalDate
 class ScreenshotTest {
 
     @get:Rule
-    val rule = createComposeRule()
+    val rule = createAndroidComposeRule<ComponentActivity>()
 
     private val today = LocalDate.now()
 
@@ -69,7 +68,10 @@ class ScreenshotTest {
     private fun capture(name: String, content: @Composable () -> Unit) {
         rule.setContent { TapsyrmaTheme(darkTheme = false) { content() } }
         rule.waitForIdle()
-        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        // captureToImage() Robolectric-те PixelCopy жауабын күтіп қалады, сондықтан View-ді Canvas-қа өзіміз саламыз.
+        val view = rule.activity.window.decorView
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        view.draw(Canvas(bitmap))
         val dir = File(System.getProperty("user.dir"), "build/screenshots").apply { mkdirs() }
         File(dir, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
