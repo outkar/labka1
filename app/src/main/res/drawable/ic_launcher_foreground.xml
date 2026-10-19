@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Қағаз парағы -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,30h36a4,4 0,0 1,4 4v40a4,4 0,0 1,-4 4h-36a4,4 0,0 1,-4 -4v-40a4,4 0,0 1,4 -4z" />
+    <!-- Белгі -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#2E5AAC"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M42,55l8,8l16,-18" />
+</vector>

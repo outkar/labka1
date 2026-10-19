@@ -1,0 +1,3 @@
+<resources>
+    <style name="Theme.Tapsyrmalar" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

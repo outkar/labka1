@@ -1,0 +1,18 @@
+package kz.labka.tapsyrma.ui.stats
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kz.labka.tapsyrma.data.TaskRepository
+import kz.labka.tapsyrma.domain.TaskStats
+import kz.labka.tapsyrma.domain.computeStats
+import java.time.LocalDate
+
+class StatsViewModel(repository: TaskRepository) : ViewModel() {
+    val stats: StateFlow<TaskStats> = repository.observeTasks()
+        .map { computeStats(it, LocalDate.now()) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TaskStats())
+}
